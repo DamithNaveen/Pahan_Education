@@ -30,7 +30,7 @@
                comfort of your home, ensuring secure transactions and timely deliveries. At The Bookshelf, customer satisfaction is 
                paramount. We are dedicated to delivering exceptional service, promptly addressing any queries or concerns. Join us in 
                celebrating the power of books to inspire, educate, and entertain. Let us be your trusted companion on your literary 
-               adventures.</p>
+               adventures....</p>
         </div>
     </section>
 

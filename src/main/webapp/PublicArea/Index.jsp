@@ -17,7 +17,7 @@
     <div class="content">
         <h1>THE BOOKSHELF<span class="dot"></span></h1>
         <p>Explore, Discover, and Buy Your Favorite Books</p>
-        <a href="#products" class="btn">Discover More</a>
+        <a href="#products" class="btn">Discover More...</a>
     </div>
 </section>
 
