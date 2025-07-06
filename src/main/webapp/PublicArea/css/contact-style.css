@@ -1,0 +1,171 @@
+
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Promo Section */
+        .promo-sec {
+            position: relative;
+            padding: 80px 0 60px; /* Reduced top/bottom padding */
+            background: url('images/promo-bg.jpg') no-repeat center center/cover;
+            background-attachment: fixed;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .promo-sec::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .promo-wrap h2 {
+            font-size: 2rem; /* Slightly smaller title */
+            margin-bottom: 0.5rem; /* Reduced margin */
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Smaller Breadcrumb Navigation */
+        .breadcrumb {
+            display: inline-flex; /* Fits content width */
+            justify-content: center;
+            list-style: none;
+            padding: 0.5rem 0.75rem; /* Reduced padding */
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            font-size: 0.9rem; /* Smaller font */
+            margin: 0 auto;
+        }
+
+        .breadcrumb-item {
+            margin: 0 4px; /* Tighter spacing */
+        }
+
+        .breadcrumb-item a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+
+        .breadcrumb-item a:hover {
+            color: #ddd;
+        }
+
+        .breadcrumb-item.active {
+            color: #eee;
+            font-weight: 500;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: "/";
+            padding: 0 4px;
+            color: #fff;
+            font-weight: normal;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 40px 0; /* Reduced padding */
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Contact Form */
+        .contact-box {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 25px; /* Slightly reduced padding */
+            margin-bottom: 25px; /* Reduced margin */
+            width: 100%;
+        }
+
+        .sub-title {
+            font-size: 1.5rem; /* Slightly smaller */
+            color: #2a2a2a;
+            font-weight: 600;
+            margin-bottom: 1.25rem; /* Reduced */
+            border-bottom: 2px solid #eee;
+            padding-bottom: 0.75rem; /* Reduced */
+            text-align: center;
+        }
+
+        /* Form Styles */
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px 12px; /* Slightly smaller */
+            margin-bottom: 15px; /* Reduced */
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.95rem; /* Slightly smaller */
+        }
+
+        textarea {
+            min-height: 120px; /* Reduced height */
+        }
+
+        .btn {
+            width: 180px; /* Slightly narrower */
+            padding: 10px 0; /* Less padding */
+            font-size: 0.95rem; /* Smaller text */
+        }
+
+        /* Map Box */
+        .map-box {
+            padding: 20px; /* Reduced padding */
+            height: 100px; /* Slightly shorter */
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .promo-sec {
+                padding: 60px 0 40px;
+            }
+            
+            .promo-wrap h2 {
+                font-size: 1.8rem;
+            }
+            
+            .map-box {
+                height: 350px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .breadcrumb {
+                font-size: 0.85rem;
+                padding: 0.4rem 0.6rem;
+            }
+            
+            .contact-box {
+                padding: 20px;
+            }
+        }
+   

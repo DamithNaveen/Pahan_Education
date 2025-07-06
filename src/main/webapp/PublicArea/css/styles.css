@@ -1,0 +1,340 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Header and Footer styles would go here */
+/* ... */
+
+/* Hero Section */
+.hero {
+    width: 100%;
+    height: 80vh;
+    background: linear-gradient url("./images/cover.jpg") no-repeat center center;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    color: white;
+}
+
+.hero .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.hero .content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    padding: 0 20px;
+}
+
+.hero h4 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 400;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.hero .dot {
+    color: #C1121F;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #C1121F;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #003049;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Section Titles */
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: #003049;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 100px;
+    height: 4px;
+    background-color: #C1121F;
+    margin: 10px auto;
+}
+
+/* Products Section */
+.products_cont {
+    padding: 5rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.pro_box_cont {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.pro_box {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.pro_box:hover {
+    transform: translateY(-10px);
+}
+
+.pro_box img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+.pro_box h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #003049;
+}
+
+.pro_box p {
+    font-size: 1.2rem;
+    color: #C1121F;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.pro_box input[type="number"] {
+    width: 60px;
+    padding: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.product_btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #003049;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.product_btn:hover {
+    background-color: #C1121F;
+}
+
+/* About Section */
+.about_cont {
+    display: flex;
+    align-items: center;
+    background-color: #669bbc;
+    padding: 4rem 2rem;
+    color: white;
+}
+
+.about_cont img {
+    width: 50%;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.about_descript {
+    width: 50%;
+    padding: 0 3rem;
+}
+
+.about_descript h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: white;
+}
+
+.about_descript p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.8;
+}
+
+.about_descript button {
+    background-color: #003049;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.about_descript button:hover {
+    background-color: #C1121F;
+}
+
+/* Questions Section */
+.questions_cont {
+    padding: 4rem 2rem;
+    background-color: #f1f1f1;
+    text-align: center;
+}
+
+.questions {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.questions h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #003049;
+}
+
+.questions p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.8;
+}
+
+.questions button {
+    background-color: #003049;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.questions button:hover {
+    background-color: #C1121F;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .hero h1 {
+        font-size: 3rem;
+    }
+    
+    .about_cont {
+        flex-direction: column;
+    }
+    
+    .about_cont img,
+    .about_descript {
+        width: 100%;
+    }
+    
+    .about_descript {
+        padding: 2rem 0 0 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        height: 60vh;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero h4 {
+        font-size: 1.2rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .pro_box_cont {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+    }
+    
+    .pro_box_cont {
+        grid-template-columns: 1fr;
+    }
+    
+    .about_cont img {
+        width: 100%;
+        margin-bottom: 2rem;
+    }
+    
+    .about_descript,
+    .questions {
+        width: 100%;
+        padding: 0;
+    }
+    
+    .about_descript button,
+    .questions button {
+        width: 100%;
+    }
+}
