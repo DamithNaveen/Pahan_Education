@@ -223,7 +223,7 @@
         </div>
         
         <nav id="nav-links">
-            <a href="../PublicArea/index.jsp">Home</a>
+            <a href="../PublicArea/Index.jsp">Home</a>
             <a href="../PublicArea/about.jsp">About</a>
             <a href="shop.jsp">Shop</a>
             <a href="../PublicArea/contact.jsp">Contact</a>

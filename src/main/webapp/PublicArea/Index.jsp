@@ -56,7 +56,7 @@
 </section>
 
 <section class="about_cont">
-    <img src="../images/about.png" alt="Bookstore Interior">
+    <img src="../images/about.jpg" alt="Bookstore Interior">
     <div class="about_descript">
         <h2>Discover Our Story</h2>
         <p>At Bookiee, we are passionate about connecting readers with captivating stories, inspiring ideas, and a world of knowledge. Our bookstore is more than just a place to buy books; it's a haven for book enthusiasts, where the love for literature thrives.</p>

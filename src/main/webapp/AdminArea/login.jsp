@@ -34,7 +34,7 @@
       </form>
     </div>
     <div class="image">
-      <img src="./assets/images/slide1.png" alt="Login Image">
+      <img src="./assets/images/bookshop.jpg" alt="Login Image">
     </div>
   </div>
 </body>
