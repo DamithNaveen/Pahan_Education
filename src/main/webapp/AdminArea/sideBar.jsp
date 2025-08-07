@@ -3,7 +3,7 @@
 
 <section id="sidebar">
   <a href="#" class="brand">
-  <i class='bx bxs-car icon'></i> Mega City Cab
+  <i class='bx bxs-car icon'></i> Pahan Edu
   </a>
   <ul class="side-menu">
     <li>
@@ -19,4 +19,4 @@
     </li>
     
   </ul>
-</section>
+</section>		

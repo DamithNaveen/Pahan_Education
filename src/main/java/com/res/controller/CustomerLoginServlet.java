@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebServlet("/register")
-public class CustomerRegistrationServlet extends HttpServlet {
+@WebServlet("/customerLogin")
+public class CustomerLoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
@@ -19,46 +19,33 @@ public class CustomerRegistrationServlet extends HttpServlet {
         
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        String fullName = request.getParameter("full_name");
-        String email = request.getParameter("email");
-        
-        System.out.println("Registration attempt - Username: " + username + ", Email: " + email);
+        System.out.println("Login attempt - Username: " + username);
         
         HttpSession session = request.getSession();
         CustomerService customerService = null;
         
         try {
-            // Create customer object
-            Customer customer = new Customer();
-            customer.setUsername(username);
-            customer.setPassword(password);
-            customer.setFullName(fullName);
-            customer.setEmail(email);
-            
-            // Register customer
             customerService = new CustomerService();
-            boolean success = customerService.registerCustomer(customer);
+            Customer customer = customerService.loginCustomer(username, password);
             
-            if (success) {
-                System.out.println("Registration successful for: " + username);
-                session.setAttribute("success", "Registration successful! Please login.");
-                response.sendRedirect("PublicArea/signIn.jsp");
+            if (customer != null) {
+                System.out.println("Login successful for: " + customer.getUsername());
+                session.setAttribute("user_id", customer.getId());
+                session.setAttribute("user_name", customer.getFullName());
+                session.setAttribute("user_obj", customer);
+                session.setAttribute("success", "Welcome back, " + customer.getFullName() + "!");
+                response.sendRedirect("PublicArea/Index.jsp");
                 return;
             } else {
-                session.setAttribute("error", "Registration failed. Please try again.");
+                System.out.println("Login failed for: " + username);
+                session.setAttribute("error", "Invalid username or password");
             }
         } catch (IllegalArgumentException e) {
             session.setAttribute("error", e.getMessage());
-            session.setAttribute("username", username);
-            session.setAttribute("email", email);
-            session.setAttribute("fullName", fullName);
             System.out.println("Validation error: " + e.getMessage());
         } catch (Exception e) {
-            session.setAttribute("error", "System error during registration. Please try again.");
-            session.setAttribute("username", username);
-            session.setAttribute("email", email);
-            session.setAttribute("fullName", fullName);
-            System.err.println("Registration error: ");
+            session.setAttribute("error", "System error during login. Please try again.");
+            System.err.println("Login error: ");
             e.printStackTrace();
         } finally {
             if (customerService != null) {
@@ -72,6 +59,6 @@ public class CustomerRegistrationServlet extends HttpServlet {
         }
         
         // If we get here, there was an error
-        response.sendRedirect("PublicArea/signUp.jsp");
+        response.sendRedirect("PublicArea/signIn.jsp");
     }
 }
