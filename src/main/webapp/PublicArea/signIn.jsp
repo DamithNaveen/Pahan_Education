@@ -4,22 +4,29 @@
 <html>
 <head>
     <title>Customer Login</title>
-        <link rel="stylesheet" href="../PublicArea/css/SignIn.css">
-    
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/PublicArea/css/SignIn.css">
 </head>
 <body>
     <div class="login-container">
         <h2>Customer Login</h2>
         
-        <c:if test="${not empty error}">
-            <div class="alert alert-danger">${error}</div>
+        <c:if test="${not empty success}">
+            <div class="alert alert-success">
+                ${success}
+            </div>
         </c:if>
         
-        <!-- Changed action to customerLogin -->
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger">
+                <strong>Error:</strong> ${error}
+            </div>
+        </c:if>
+        
         <form action="${pageContext.request.contextPath}/customerLogin" method="POST">
             <div class="input-group">
                 <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
+                <input type="text" id="username" name="username" required 
+                       value="${param.username}">
             </div>
             <div class="input-group">
                 <label for="password">Password:</label>

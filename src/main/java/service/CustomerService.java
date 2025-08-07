@@ -5,32 +5,54 @@ import com.res.model.Customer;
 import com.res.dao.CustomerDAO;
 
 public class CustomerService {
-    private CustomerDAO customerDAO = new CustomerDAO();
+    private CustomerDAO customerDAO;
+
+    public CustomerService() throws SQLException {
+        this.customerDAO = new CustomerDAO();
+    }
 
     public Customer loginCustomer(String username, String password) throws SQLException {
         // Input validation
-        if (username == null || username.trim().isEmpty() || 
-            password == null || password.trim().isEmpty()) {
-            throw new IllegalArgumentException("Username and password are required");
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username is required");
+        }
+        if (password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password is required");
         }
 
         // Get customer from database
         Customer customer = customerDAO.getCustomerByUsername(username.trim());
         
-        // Simple password comparison (not secure for production)
-        if (customer != null && password.equals(customer.getPassword())) {
-            return createSafeCustomer(customer);
+        if (customer == null) {
+            System.out.println("No customer found with username: " + username);
+            return null;
         }
-        return null;
+        
+        // Password comparison (in production, use hashed passwords)
+        if (!password.equals(customer.getPassword())) {
+            System.out.println("Password mismatch for user: " + username);
+            return null;
+        }
+        
+        return customer;
     }
 
-    // Registration without password hashing
     public boolean registerCustomer(Customer customer) throws SQLException {
         // Input validation
-        if (customer == null || 
-            !isValid(customer.getUsername()) ||
-            !isValid(customer.getPassword())) {
-            throw new IllegalArgumentException("Username and password are required");
+        if (customer == null) {
+            throw new IllegalArgumentException("Customer cannot be null");
+        }
+        if (customer.getFullName() == null || customer.getFullName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Full name is required");
+        }
+        if (customer.getUsername() == null || customer.getUsername().trim().isEmpty()) {
+            throw new IllegalArgumentException("Username is required");
+        }
+        if (customer.getEmail() == null || customer.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("Email is required");
+        }
+        if (customer.getPassword() == null || customer.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("Password is required");
         }
 
         // Check if username exists
@@ -38,20 +60,17 @@ public class CustomerService {
             throw new IllegalArgumentException("Username already exists");
         }
 
-        // Store password as plain text (not recommended)
+        // Check if email exists
+        if (customerDAO.isEmailExists(customer.getEmail().trim())) {
+            throw new IllegalArgumentException("Email already registered");
+        }
+
         return customerDAO.addCustomer(customer);
     }
 
-    // [Keep other methods unchanged]
-    private Customer createSafeCustomer(Customer customer) {
-        Customer safeCustomer = new Customer();
-        safeCustomer.setId(customer.getId());
-        safeCustomer.setUsername(customer.getUsername());
-        // Don't include password in the returned object
-        return safeCustomer;
-    }
-
-    private boolean isValid(String value) {
-        return value != null && !value.trim().isEmpty();
+    public void close() throws SQLException {
+        if (customerDAO != null) {
+            customerDAO.close();
+        }
     }
 }

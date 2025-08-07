@@ -3,6 +3,7 @@ package com.res.controller;
 import com.res.dao.CartDAO;
 import com.res.model.CartItem;
 import java.io.IOException;
+import java.sql.SQLException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,8 +13,8 @@ import javax.servlet.http.HttpSession;
 
 @WebServlet("/AddToCartServlet")
 public class AddToCartServlet extends HttpServlet {
-    
-    @Override
+    private static final long serialVersionUID = 1L;
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
@@ -21,72 +22,35 @@ public class AddToCartServlet extends HttpServlet {
         String userId = (String) session.getAttribute("user_id");
         
         if (userId == null) {
-            response.sendRedirect("login.jsp?redirect=" + request.getRequestURI());
+            response.sendRedirect("login.jsp");
             return;
         }
-        
+
         try {
-            // Validate and parse request parameters
-            int bookId = validateAndParseInt(request.getParameter("book_id"), "Book ID");
-            String bookName = validateString(request.getParameter("book_name"), "Book name");
-            double price = validateAndParseDouble(request.getParameter("price"), "Price");
-            int quantity = validateAndParseInt(request.getParameter("quantity"), "Quantity");
-            String image = validateString(request.getParameter("image"), "Image");
-            
-            // Create cart item
+            int bookId = Integer.parseInt(request.getParameter("book_id"));
+            String bookName = request.getParameter("book_name");
+            double price = Double.parseDouble(request.getParameter("price"));
+            int quantity = Integer.parseInt(request.getParameter("quantity"));
+            String image = request.getParameter("image");
+
             CartItem item = new CartItem(userId, bookId, bookName, price, quantity, image);
-            
-            // Add to cart
             CartDAO cartDAO = new CartDAO();
-            try {
-                boolean added = cartDAO.addItem(item);
-                
-                if (added) {
-                    session.setAttribute("message", bookName + " added to cart successfully!");
-                } else {
-                    session.setAttribute("error", "Failed to add item to cart");
-                }
-            } finally {
-                cartDAO.close();
+            
+            if (cartDAO.addItem(item)) {
+                session.setAttribute("cartItems", cartDAO.getCartItems(userId));
+                session.setAttribute("message", bookName + " added to cart!");
+            } else {
+                session.setAttribute("error", "Failed to add item to cart");
             }
             
+            cartDAO.close();
         } catch (NumberFormatException e) {
-            session.setAttribute("error", "Invalid number format: " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            session.setAttribute("error", e.getMessage());
-        } catch (Exception e) {
-            session.setAttribute("error", "System error: " + e.getMessage());
+            session.setAttribute("error", "Invalid product data");
+        } catch (SQLException e) {
+            session.setAttribute("error", "Database error occurred");
+            e.printStackTrace();
         }
         
         response.sendRedirect(request.getHeader("referer"));
-    }
-    
-    private int validateAndParseInt(String value, String fieldName) {
-        if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException(fieldName + " is required");
-        }
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid " + fieldName + " format");
-        }
-    }
-    
-    private double validateAndParseDouble(String value, String fieldName) {
-        if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException(fieldName + " is required");
-        }
-        try {
-            return Double.parseDouble(value);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid " + fieldName + " format");
-        }
-    }
-    
-    private String validateString(String value, String fieldName) {
-        if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException(fieldName + " is required");
-        }
-        return value.trim();
     }
 }

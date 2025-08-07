@@ -1,5 +1,7 @@
 package com.res.controller;
 
+import com.res.model.Customer;
+import service.CustomerService;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -7,65 +9,69 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import com.res.model.Customer;
-import service.CustomerService;
 
 @WebServlet("/register")
 public class CustomerRegistrationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private CustomerService customerService = new CustomerService();
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-
+        
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String fullName = request.getParameter("full_name");
+        String email = request.getParameter("email");
+        
+        System.out.println("Registration attempt - Username: " + username + ", Email: " + email);
+        
         HttpSession session = request.getSession();
+        CustomerService customerService = null;
         
         try {
-            // Get parameters
-            String fullName = request.getParameter("full_name");
-            String username = request.getParameter("username");
-            String email = request.getParameter("email");
-            String password = request.getParameter("password");
-            String address = request.getParameter("address");
-            String phone = request.getParameter("phone");
-
-            // Validate inputs
-            if (fullName == null || fullName.trim().isEmpty() ||
-                username == null || username.trim().isEmpty() ||
-                email == null || email.trim().isEmpty() ||
-                password == null || password.trim().isEmpty()) {
-                throw new IllegalArgumentException("All required fields must be filled");
-            }
-
             // Create customer object
-            Customer customer = new Customer(
-                fullName, 
-                username, 
-                email, 
-                password, 
-                address, 
-                phone
-            );
-
+            Customer customer = new Customer();
+            customer.setUsername(username);
+            customer.setPassword(password);
+            customer.setFullName(fullName);
+            customer.setEmail(email);
+            
             // Register customer
-            boolean isRegistered = customerService.registerCustomer(customer);
-
-            if (isRegistered) {
-                // Set customer in session and redirect to index
-                session.setAttribute("user", customer);
-                session.setAttribute("success", "Registration successful! Welcome, " + customer.getFullName() + "!");
-                response.sendRedirect(request.getContextPath() + "/PublicArea/Index.jsp");
+            customerService = new CustomerService();
+            boolean success = customerService.registerCustomer(customer);
+            
+            if (success) {
+                System.out.println("Registration successful for: " + username);
+                session.setAttribute("success", "Registration successful! Please login.");
+                response.sendRedirect("PublicArea/signIn.jsp");
+                return;
             } else {
                 session.setAttribute("error", "Registration failed. Please try again.");
-                response.sendRedirect(request.getContextPath() + "/PublicArea/signUp.jsp");
             }
         } catch (IllegalArgumentException e) {
             session.setAttribute("error", e.getMessage());
-            response.sendRedirect(request.getContextPath() + "/PublicArea/signUp.jsp");
+            session.setAttribute("username", username);
+            session.setAttribute("email", email);
+            session.setAttribute("fullName", fullName);
+            System.out.println("Validation error: " + e.getMessage());
         } catch (Exception e) {
+            session.setAttribute("error", "System error during registration. Please try again.");
+            session.setAttribute("username", username);
+            session.setAttribute("email", email);
+            session.setAttribute("fullName", fullName);
+            System.err.println("Registration error: ");
             e.printStackTrace();
-            session.setAttribute("error", "System error during registration: " + e.getMessage());
-            response.sendRedirect(request.getContextPath() + "/PublicArea/signUp.jsp");
+        } finally {
+            if (customerService != null) {
+                try {
+                    customerService.close();
+                } catch (Exception e) {
+                    System.err.println("Error closing service: ");
+                    e.printStackTrace();
+                }
+            }
         }
+        
+        // If we get here, there was an error
+        response.sendRedirect("PublicArea/signUp.jsp");
     }
 }

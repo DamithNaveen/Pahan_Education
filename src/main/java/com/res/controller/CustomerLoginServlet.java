@@ -1,5 +1,7 @@
 package com.res.controller;
 
+import com.res.model.Customer;
+import service.CustomerService;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -7,46 +9,56 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import com.res.model.Customer;
-import service.CustomerService;
 
 @WebServlet("/customerLogin")
 public class CustomerLoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private CustomerService customerService = new CustomerService();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        System.out.println("Login attempt - Username: " + username);
+        
         HttpSession session = request.getSession();
+        CustomerService customerService = null;
         
         try {
-            // Input validation
-            if (username == null || username.trim().isEmpty() || 
-                password == null || password.trim().isEmpty()) {
-                session.setAttribute("error", "Username and password are required");
-                response.sendRedirect(request.getContextPath() + "/PublicArea/signIn.jsp");
-                return;
-            }
-            
+            customerService = new CustomerService();
             Customer customer = customerService.loginCustomer(username, password);
             
             if (customer != null) {
-                // Login successful
-                session.setAttribute("user", customer);
+                System.out.println("Login successful for: " + customer.getUsername());
+                session.setAttribute("user_id", customer.getId());
+                session.setAttribute("user_name", customer.getFullName());
+                session.setAttribute("user_obj", customer);
                 session.setAttribute("success", "Welcome back, " + customer.getFullName() + "!");
-                response.sendRedirect(request.getContextPath() + "/PublicArea/Index.jsp");
+                response.sendRedirect("PublicArea/Index.jsp");
+                return;
             } else {
-                // Login failed
+                System.out.println("Login failed for: " + username);
                 session.setAttribute("error", "Invalid username or password");
-                response.sendRedirect(request.getContextPath() + "/PublicArea/signIn.jsp");
             }
+        } catch (IllegalArgumentException e) {
+            session.setAttribute("error", e.getMessage());
+            System.out.println("Validation error: " + e.getMessage());
         } catch (Exception e) {
+            session.setAttribute("error", "System error during login. Please try again.");
+            System.err.println("Login error: ");
             e.printStackTrace();
-            session.setAttribute("error", "System error during login: " + e.getMessage());
-            response.sendRedirect(request.getContextPath() + "/PublicArea/signIn.jsp");
+        } finally {
+            if (customerService != null) {
+                try {
+                    customerService.close();
+                } catch (Exception e) {
+                    System.err.println("Error closing service: ");
+                    e.printStackTrace();
+                }
+            }
         }
+        
+        // If we get here, there was an error
+        response.sendRedirect("PublicArea/signIn.jsp");
     }
 }

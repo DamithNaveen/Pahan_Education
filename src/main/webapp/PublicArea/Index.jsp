@@ -1,21 +1,88 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%@ page import="java.util.*" %>
-<%
-   
-%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Bookshelf - Explore Our Collection</title>
-    <link rel="stylesheet" href="../PublicArea/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/PublicArea/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="../PublicArea/css/home.css">
-    
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/PublicArea/css/home.css">
+    <style>
+        /* Add this new style for the confirmation modal */
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .modal-buttons {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .modal-btn {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .modal-btn-primary {
+            background-color: #0d6efd;
+            color: white;
+        }
+        
+        .modal-btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
 </head>
 <body>
 <jsp:include page="header.jsp" />
+
+<!-- Success/Error Messages -->
+<c:if test="${not empty message}">
+    <div class="alert alert-success">${message}</div>
+    <c:remove var="message" scope="session"/>
+</c:if>
+<c:if test="${not empty error}">
+    <div class="alert alert-danger">${error}</div>
+    <c:remove var="error" scope="session"/>
+</c:if>
+
+<!-- Confirmation Modal -->
+<div class="confirmation-modal" id="confirmationModal">
+    <div class="modal-content">
+        <h3>Save Your Selections</h3>
+        <p>You have items in your cart that haven't been saved. Would you like to save them before continuing?</p>
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-primary" id="saveAndContinue">Save and Continue</button>
+            <button class="modal-btn modal-btn-secondary" id="continueWithoutSaving">Continue Without Saving</button>
+            <button class="modal-btn modal-btn-secondary" id="cancelAction">Cancel</button>
+        </div>
+    </div>
+</div>
 
 <section id="billboard" class="position-relative" style="background-image: url('${pageContext.request.contextPath}/images/banner-image-bg.jpg'); background-size: cover; background-position: center;">
   <div class="swiper main-swiper">
@@ -113,12 +180,13 @@
             <img src="${pageContext.request.contextPath}/images/book1.jpg" alt="Book Cover">
             <h3>The Great Gatsby</h3>
             <p>Rs. 1200/-</p>
-            <form action="index.jsp" method="post">
-                <input type="number" name="product_quantity" min="1" value="1">
-                <input type="hidden" name="product_name" value="The Great Gatsby">
-                <input type="hidden" name="product_price" value="1200">
-                <input type="hidden" name="product_image" value="book1.jpg">
-                <input type="submit" value="Add to Cart" name="add_to_cart" class="product_btn">
+            <form action="${pageContext.request.contextPath}/AddToCartServlet" method="post" class="product-form">
+                <input type="number" name="quantity" min="1" value="1">
+                <input type="hidden" name="book_id" value="1">
+                <input type="hidden" name="book_name" value="The Great Gatsby">
+                <input type="hidden" name="price" value="1200">
+                <input type="hidden" name="image" value="book1.jpg">
+                <button type="submit" class="product_btn">Add to Cart</button>
             </form>
         </div>
         
@@ -127,12 +195,13 @@
             <img src="${pageContext.request.contextPath}/images/book2.jpg" alt="Book Cover">
             <h3>To Kill a Mockingbird</h3>
             <p>Rs. 950/-</p>
-            <form action="index.jsp" method="post">
-                <input type="number" name="product_quantity" min="1" value="1">
-                <input type="hidden" name="product_name" value="To Kill a Mockingbird">
-                <input type="hidden" name="product_price" value="950">
-                <input type="hidden" name="product_image" value="book2.jpg">
-                <input type="submit" value="Add to Cart" name="add_to_cart" class="product_btn">
+            <form action="${pageContext.request.contextPath}/AddToCartServlet" method="post" class="product-form">
+                <input type="number" name="quantity" min="1" value="1">
+                <input type="hidden" name="book_id" value="2">
+                <input type="hidden" name="book_name" value="To Kill a Mockingbird">
+                <input type="hidden" name="price" value="950">
+                <input type="hidden" name="image" value="book2.jpg">
+                <button type="submit" class="product_btn">Add to Cart</button>
             </form>
         </div>
         
@@ -141,29 +210,28 @@
             <img src="${pageContext.request.contextPath}/images/book3.jpg" alt="Book Cover">
             <h3>The Psychology of Money</h3>
             <p>Rs. 1150/-</p>
-            <form action="index.jsp" method="post">
-                <input type="number" name="product_quantity" min="1" value="1">
-                <input type="hidden" name="product_name" value="The Psychology of Money">
-                <input type="hidden" name="product_price" value="1150">
-                <input type="hidden" name="product_image" value="book3.jpg">
-                <input type="submit" value="Add to Cart" name="add_to_cart" class="product_btn">
+            <form action="${pageContext.request.contextPath}/AddToCartServlet" method="post" class="product-form">
+                <input type="number" name="quantity" min="1" value="1">
+                <input type="hidden" name="book_id" value="3">
+                <input type="hidden" name="book_name" value="The Psychology of Money">
+                <input type="hidden" name="price" value="1150">
+                <input type="hidden" name="image" value="book3.jpg">
+                <button type="submit" class="product_btn">Add to Cart</button>
             </form>
         </div>
         
-        <button class="see-more-btn product_btn" onclick="window.location.href='shop.jsp';">See More</button>
+        <button class="see-more-btn product_btn" id="seeMoreBtn">See More</button>
     </div>
 </section>
 
 <section class="about_cont">
-    <img src="../images/about.jpg" alt="Bookstore Interior">
+    <img src="${pageContext.request.contextPath}/images/about.jpg" alt="Bookstore Interior">
     <div class="about_descript">
         <h2>Discover Our Story</h2>
         <p>At Bookiee, we are passionate about connecting readers with captivating stories, inspiring ideas, and a world of knowledge. Our bookstore is more than just a place to buy books; it's a haven for book enthusiasts, where the love for literature thrives.</p>
         <button class="product_btn" onclick="window.location.href='about.jsp';">Read More</button>
     </div>
 </section>
-
-
 
 <section id="testimonials" style="background-image: url('${pageContext.request.contextPath}/images/Customer-review.jpg');">
   <div class="testimonial-overlay"></div>
@@ -201,8 +269,80 @@
 
 <!-- JavaScript at the bottom of the body -->
 <script src="${pageContext.request.contextPath}/PublicArea/js/review.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const seeMoreBtn = document.getElementById('seeMoreBtn');
+    const productForms = document.querySelectorAll('.product-form');
+    const modal = document.getElementById('confirmationModal');
+    const saveAndContinueBtn = document.getElementById('saveAndContinue');
+    const continueWithoutSavingBtn = document.getElementById('continueWithoutSaving');
+    const cancelActionBtn = document.getElementById('cancelAction');
+    
+    // Track if any form has been modified
+    let formsModified = false;
+    
+    // Add event listeners to all product forms
+    productForms.forEach(form => {
+        const quantityInput = form.querySelector('input[type="number"]');
+        const originalValue = quantityInput.value;
+        
+        quantityInput.addEventListener('change', function() {
+            if (this.value !== originalValue) {
+                formsModified = true;
+            }
+        });
+    });
+    
+    // See More button click handler
+    seeMoreBtn.addEventListener('click', function(e) {
+        if (formsModified) {
+            e.preventDefault();
+            modal.style.display = 'flex';
+        } else {
+            window.location.href = '${pageContext.request.contextPath}/PublicArea/shop.jsp';
+        }
+    });
+    
+    // Modal button handlers
+    saveAndContinueBtn.addEventListener('click', function() {
+        // Submit all modified forms
+        productForms.forEach(form => {
+            const quantityInput = form.querySelector('input[type="number"]');
+            const originalValue = quantityInput.dataset.originalValue || quantityInput.defaultValue;
+            
+            if (quantityInput.value !== originalValue) {
+                // Create a hidden input to indicate this is a save action
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'save_and_continue';
+                hiddenInput.value = 'true';
+                form.appendChild(hiddenInput);
+                
+                // Submit the form via AJAX
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form)
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = '${pageContext.request.contextPath}/PublicArea/shop.jsp';
+                    }
+                });
+            }
+        });
+        
+        // If no forms need submitting, just redirect
+        window.location.href = '${pageContext.request.contextPath}/PublicArea/shop.jsp';
+    });
+    
+    continueWithoutSavingBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+        window.location.href = '${pageContext.request.contextPath}/PublicArea/shop.jsp';
+    });
+    
+    cancelActionBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+});
+</script>
 </body>
-
-
-
 </html>
