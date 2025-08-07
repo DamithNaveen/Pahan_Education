@@ -24,7 +24,3 @@ public class LogoutServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/Index.jsp?message=logout_success");
     }
 }
-
-
-
-

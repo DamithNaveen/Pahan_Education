@@ -3,106 +3,144 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Your Shopping Cart</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .cart-container { max-width: 1200px; margin: 2rem auto; }
-        .cart-img { width: 60px; height: 90px; object-fit: cover; margin-right: 15px; }
-        .product-cell { display: flex; align-items: center; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Bookshelf - Explore Our Collection</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/PublicArea/css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/PublicArea/css/cart.css">
+<title>Your Shopping Cart</title>
+
+<jsp:include page="header.jsp" />
 </head>
 <body>
-    <jsp:include page="header.jsp" />
 
-    <div class="container cart-container">
-        <h2 class="mb-4">Your Shopping Cart</h2>
-        
-        <c:if test="${not empty message}">
-            <div class="alert alert-success">${message}</div>
-            <c:remove var="message" scope="session"/>
-        </c:if>
-        
-        <c:if test="${not empty error}">
-            <div class="alert alert-danger">${error}</div>
-            <c:remove var="error" scope="session"/>
-        </c:if>
+<!-- Popup alert for message -->
+<c:if test="${not empty message}">
+    <script>
+        alert("${message}");
+    </script>
+    <c:remove var="message" scope="session"/>
+</c:if>
 
-        <c:choose>
-            <c:when test="${empty cartItems}">
-                <div class="alert alert-info text-center py-4">
-                    <i class="fas fa-shopping-cart fa-3x mb-3"></i>
-                    <h4>Your cart is empty</h4>
-                    <a href="shop.jsp" class="btn btn-primary mt-2">Continue Shopping</a>
-                </div>
-            </c:when>
-            <c:otherwise>
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead class="table-light">
+<!-- Popup alert for error -->
+<c:if test="${not empty error}">
+    <script>
+        alert("${error}");
+    </script>
+    <c:remove var="error" scope="session"/>
+</c:if>
+
+<div class="container cart-container">
+    <h2 class="mb-4">Your Shopping Cart</h2>
+
+    <c:if test="${not empty message}">
+        <div class="alert alert-success alert-dismissible fade show">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <c:remove var="message" scope="session"/>
+    </c:if>
+
+    <c:if test="${not empty error}">
+        <div class="alert alert-danger alert-dismissible fade show">
+            ${error}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <c:remove var="error" scope="session"/>
+    </c:if>
+
+    <c:choose>
+        <c:when test="${empty cartItems}">
+            <div class="alert alert-info text-center py-5">
+                <h4>Your cart is empty</h4>
+                <a href="${pageContext.request.contextPath}/shop.jsp" class="btn btn-primary mt-3">
+                    Continue Shopping
+                </a>
+            </div>
+        </c:when>
+        <c:otherwise>
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Product</th>
+                            <th class="text-end">Price</th>
+                            <th>Quantity</th>
+                            <th class="text-end">Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="${cartItems}" var="item">
                             <tr>
-                                <th>Product</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Total</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach var="item" items="${cartItems}">
-                                <tr>
-                                    <td class="product-cell">
+                                <td>
+                                    <div class="d-flex align-items-center">
                                         <img src="${pageContext.request.contextPath}/images/${item.image}" 
-                                             class="cart-img" 
+                                             class="cart-img me-3" 
                                              alt="${item.bookName}">
-                                        ${item.bookName}
-                                    </td>
-                                    <td>Rs. ${item.price}</td>
-                                    <td>
-                                        <form action="UpdateCartServlet" method="post" class="d-flex">
-                                            <input type="number" name="quantity" 
-                                                   value="${item.quantity}" 
-                                                   min="1" 
-                                                   class="form-control form-control-sm" 
-                                                   style="width: 70px;">
-                                            <input type="hidden" name="book_id" value="${item.bookId}">
-                                            <button type="submit" class="btn btn-sm btn-outline-primary ms-2">
-                                                Update
-                                            </button>
-                                        </form>
-                                    </td>
-                                    <td>Rs. ${item.price * item.quantity}</td>
-                                    <td>
-                                        <a href="RemoveFromCartServlet?book_id=${item.bookId}" 
-                                           class="btn btn-sm btn-outline-danger"
-                                           onclick="return confirm('Remove this item?')">
-                                            <i class="fas fa-trash-alt"></i> Remove
-                                        </a>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="d-flex justify-content-between align-items-center mt-4">
-                    <a href="shop.jsp" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left"></i> Continue Shopping
-                    </a>
-                    
-                    <div class="text-end">
-                        <h4>Grand Total: Rs. ${cartTotal}</h4>
-                        <a href="checkout.jsp" class="btn btn-success mt-2">
-                            <i class="fas fa-credit-card"></i> Proceed to Checkout
-                        </a>
-                    </div>
-                </div>
-            </c:otherwise>
-        </c:choose>
-    </div>
+                                        <div>
+                                            <h5 class="mb-1">${item.bookName}</h5>
+                                            <small class="text-muted">ID: ${item.bookId}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-end">Rs. ${item.price}</td>
+                                <td>
+                                    <form action="${pageContext.request.contextPath}/UpdateCartServlet" method="post" class="d-flex gap-2">
+                                        <input type="number" name="quantity" 
+                                               value="${item.quantity}" 
+                                               min="1" 
+                                               class="form-control quantity-input">
+                                        <input type="hidden" name="book_id" value="${item.bookId}">
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">
+                                            Update
+                                        </button>
+                                    </form>
+                                </td>
+                                <td class="text-end">Rs. ${item.price * item.quantity}</td>
+                                <td>
+                                    <a href="${pageContext.request.contextPath}/RemoveFromCartServlet?book_id=${item.bookId}" 
+                                       class="btn btn-sm btn-outline-danger"
+                                       onclick="return confirm('Remove this item from cart?')">
+                                        Remove
+                                    </a>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                    <tfoot class="table-active">
+                        <tr>
+                            <td colspan="3" class="text-end fw-bold">Grand Total:</td>
+                            <td class="text-end fw-bold">Rs. ${cartTotal}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
 
-    <jsp:include page="footer.jsp" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <div class="d-flex justify-content-between mt-4">
+                <a href="${pageContext.request.contextPath}/PublicArea/shop.jsp" class="btn btn-outline-secondary">
+                    Continue Shopping
+                </a>
+                <a href="${pageContext.request.contextPath}/PublicArea/checkout.jsp" class="btn btn-success">
+                    Proceed to Checkout
+                </a>
+            </div>
+        </c:otherwise>
+    </c:choose>
+</div>
+
+<jsp:include page="footer.jsp" />
+
+<script>
+    // Auto-hide alerts after 5 seconds
+    setTimeout(() => {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            new bootstrap.Alert(alert).close();
+        });
+    }, 5000);
+</script>
 </body>
 </html>
