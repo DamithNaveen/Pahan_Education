@@ -1,0 +1,156 @@
+/* Container box for form and product display */
+.pro_box {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  width: 80%;
+  gap: 1rem;
+  box-shadow: 5px 2px 20px 0 rgba(43,61,73,0.7);
+  border-radius: 20px;
+  position: relative;
+  margin: 20px auto; /* center and spacing */
+}
+
+/* Make images inside pro_box a consistent size */
+.pro_box img {
+  width: 60%;
+  height: 70%;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+/* Inputs inside pro_box (forms) */
+.pro_box input,
+.pro_box textarea,
+.pro_box select {
+  width: 60%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  outline-offset: 2px;
+  outline-color: #3498db;
+}
+
+/* Buttons inside pro_box */
+.pro_box button {
+  width: auto;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  background-color: #C1121F;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.pro_box button:hover {
+  background-color: #8b0d14;
+}
+
+/* Message box like your <p> tag with position absolute */
+.pro_box p {
+  background-color: #C1121F;
+  color: white;
+  padding: 0.2rem 1rem;
+  border-radius: 5px;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+}
+
+/* Table styles adapted */
+table {
+  border-collapse: collapse;
+  width: 80%;
+  margin: 20px auto;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 5px 2px 20px 0 rgba(43,61,73,0.7);
+  background: white;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 12px 15px;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 0.95rem;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: 600;
+}
+
+.action-buttons button {
+  margin-right: 5px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 15px;
+  border: none;
+  color: white;
+  background-color: #C1121F;
+  transition: background-color 0.3s ease;
+}
+
+.action-buttons button:hover {
+  background-color: #8b0d14;
+}
+
+.deleteBtn {
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 15px;
+}
+
+.deleteBtn:hover {
+  background-color: #cc0000;
+}
+
+/* Modal container styled as pro_box but with fixed position */
+#updateFormContainer {
+  display: none;
+  position: fixed;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 20px;
+  padding: 1rem 2rem;
+  box-shadow: 5px 2px 20px 0 rgba(43,61,73,0.7);
+  z-index: 1000;
+  max-width: 400px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+}
+
+#updateFormContainer.active {
+  display: flex;
+}
+
+#updateFormContainer button.close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #C1121F;
+  color: white;
+  border: none;
+  padding: 0.2rem 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 10px;
+}

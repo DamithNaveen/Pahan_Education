@@ -47,18 +47,18 @@
                     <div class="head">
                         <div>
                             <h2></h2>
-                            <p>Total Orders</p>
+                            <p>Total Payments Pending</p>
                         </div>
                         <i class='bx bx-receipt icon'></i>
                     </div>
                     <span class="progress" data-value="100%"></span>
-                    <span class="label">All Bookings</span>
+                    
                 </div>
                 <div class="card">
                     <div class="head">
                         <div>
                             <h2></h2>
-                            <p>Completed Orders</p>
+                            <p>Completed Payments</p>
                         </div>
                         <i class='bx bx-check-circle icon'></i>
                     </div>
@@ -69,7 +69,7 @@
                     <div class="head">
                         <div>
                             <h2></h2>
-                            <p>Confirmed Orders</p>
+                            <p>Orders Placed</p>
                         </div>
                         <i class='bx bx-calendar-check icon'></i>
                     </div>
@@ -80,7 +80,7 @@
                     <div class="head">
                         <div>
                             <h2></h2>
-                            <p>Pending Orders</p>
+                            <p>Products Added</p>
                         </div>
                         <i class='bx bx-time icon'></i>
                     </div>
@@ -94,102 +94,49 @@
                     <div class="head">
                         <div>
                             <h2></h2>
-                            <p>Total Revenue</p>
+                            <p>User Present</p>
                         </div>
                         <i class='bx bx-money icon'></i>
                     </div>
                     <span class="progress" data-value="100%"></span>
-                    <span class="label">Income</span>
+                  
                 </div>
                 <div class="card">
                     <div class="head">
                         <div>
                             <h2></h2>
-                            <p>Total Drivers</p>
+                            <p>Admin Present</p>
                         </div>
                         <i class='bx bx-user icon'></i>
                     </div>
                     <span class="progress" data-value="100%"></span>
-                    <span class="label">Active Drivers</span>
+                   
                 </div>
                 <div class="card">
                     <div class="head">
                         <div>
                             <h2></h2>
-                            <p>Total Vehicles</p>
+                            <p>Total Accounts</p>
                         </div>
                         <i class='bx bx-car icon'></i>
+                   
                     </div>
-                    <span class="progress" data-value="100%"></span>
-                    <span class="label">Fleet Size</span>
-                </div>
+                    </div>
                 <div class="card">
                     <div class="head">
                         <div>
                             <h2></h2>
-                            <p>Total Customers</p>
+                            <p>New Messages</p>
                         </div>
-                        <i class='bx bx-group icon'></i>
-                    </div>
-                    <span class="progress" data-value="100%"></span>
-                    <span class="label">Registered Users</span>
-                </div>
-            </div>
-            
-            <div class="data">
-                <div class="content-data">
-                    <div class="head">
-                        <h3>Vehicle Fleet Summary</h3>
-                        <div class="menu">
-                            <i class='bx bx-dots-horizontal-rounded icon'></i>
-                            <ul class="menu-link">
-                                <li><a href="#">View All</a></li>
-                                <li><a href="#">Refresh</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div id="vehicle-chart"></div>
-                    <div class="stats-summary">
-                        
-                    </div>
+                        <i class='bx bx-car icon'></i>
                 </div>
                 
-                <div class="content-data">
-                    <div class="head">
-                        <h3>Booking Performance</h3>
-                        <div class="menu">
-                            <i class='bx bx-dots-horizontal-rounded icon'></i>
-                            <ul class="menu-link">
-                                <li><a href="#">View Details</a></li>
-                                <li><a href="#">Print Report</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div id="booking-chart"></div>
-                    <div class="stats-summary">
-                        
-                    </div>
+               
                 </div>
-            </div>
+         
             
-            <!-- BOOKINGS TABLE -->
-            <div class="data">
-                <div class="content-data">
-                    <div class="head">
-                        <h3>Booking Management</h3>
-                        <div class="menu">
-                            <i class='bx bx-dots-horizontal-rounded icon'></i>
-                            <ul class="menu-link">
-                                <li><a href="#">View All</a></li>
-                                <li><a href="#">Export</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                       
-                    </div>
-                </div>
-            </div>
+          
+            
         
         </main>
         <!-- MAIN -->
