@@ -6,7 +6,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class ProductService {
-    private ProductDAO productDAO = new ProductDAO();
+    private ProductDAO productDAO;
+
+    public ProductService() {
+        productDAO = new ProductDAO();
+    }
 
     public void addProduct(Product product) throws SQLException {
         productDAO.addProduct(product);
@@ -16,8 +20,8 @@ public class ProductService {
         return productDAO.getAllProducts();
     }
 
-    public void deleteProduct(int productId) throws SQLException {
-        productDAO.deleteProduct(productId);
+    public void deleteProduct(int id) throws SQLException {
+        productDAO.deleteProduct(id);
     }
 
     public Product getProductById(int id) throws SQLException {

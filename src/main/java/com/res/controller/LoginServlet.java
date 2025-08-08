@@ -2,7 +2,9 @@ package com.res.controller;
 
 import com.res.model.User;
 import com.res.model.UserRole;
+import com.res.model.Product;
 import service.UserService;
+import service.ProductService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,9 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 @WebServlet("/login")
-
 public class LoginServlet extends HttpServlet {
     private UserService userService = new UserService();
 
@@ -25,9 +27,7 @@ public class LoginServlet extends HttpServlet {
         String role = request.getParameter("role");
 
         try {
-            // Validate the role parameter against the UserRole enum
             UserRole userRole = UserRole.fromString(role);
-
             int authResult = userService.authenticateUser(email, password, role);
             HttpSession session = request.getSession();
             
@@ -35,10 +35,21 @@ public class LoginServlet extends HttpServlet {
                 case UserService.AUTH_SUCCESS:
                     User user = userService.getUserByEmail(email);
                     session.setAttribute("user", user); 
+                    
+                    // Load products for admin users
+                    if (userRole == UserRole.ADMIN) {
+                        ProductService productService = new ProductService();
+                        try {
+                            List<Product> productList = productService.getAllProducts();
+                            session.setAttribute("productList", productList);
+                        } catch (SQLException e) {
+                            session.setAttribute("error", "Error loading products");
+                        }
+                    }
+                    
                     if (userRole == UserRole.ADMIN) {
                         response.sendRedirect(request.getContextPath() + "/AdminArea/dashboard.jsp");
                     } else if (userRole == UserRole.DRIVER) {
-                    	
                         response.sendRedirect(request.getContextPath() + "/DriverArea/dashboard.jsp");
                     } else if (userRole == UserRole.CUSTOMER) {
                         response.sendRedirect(request.getContextPath() + "/CustomerArea/dashboard.jsp");

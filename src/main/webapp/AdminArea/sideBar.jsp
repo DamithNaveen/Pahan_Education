@@ -18,5 +18,24 @@
       </a>
     </li>
     
+   <li>
+  <a href="./orders.jsp">
+    <i class='bx bxs-cart icon'></i> Orders
+  </a>
+</li>
+
+<li>
+  <a href="./users.jsp">
+    <i class='bx bxs-user icon'></i> Users
+  </a>
+</li>
+
+<li>
+  <a href="./messages.jsp">
+    <i class='bx bxs-message-rounded icon'></i> Messages
+  </a>
+</li>
+
+    
   </ul>
 </section>		

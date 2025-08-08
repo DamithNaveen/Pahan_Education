@@ -25,7 +25,7 @@ public class ProductDAO {
 
     public List<Product> getAllProducts() throws SQLException {
         List<Product> productList = new ArrayList<>();
-        String sql = "SELECT * FROM products";
+        String sql = "SELECT * FROM products ORDER BY id DESC";
         try (Connection conn = DatabaseUtil.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -50,7 +50,11 @@ public class ProductDAO {
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, productId);
-            pstmt.executeUpdate();
+            int affectedRows = pstmt.executeUpdate();
+            
+            if (affectedRows == 0) {
+                throw new SQLException("Deleting product failed, no rows affected.");
+            }
         }
     }
 

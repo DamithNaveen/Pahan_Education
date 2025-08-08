@@ -7,10 +7,15 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 @WebServlet("/product")
 @MultipartConfig(
@@ -32,13 +37,19 @@ public class ProductServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         HttpSession session = request.getSession();
+        String action = request.getParameter("action");
+        
         try {
-            request.setAttribute("productList", productService.getAllProducts());
-            request.getRequestDispatcher("/AdminArea/product.jsp").forward(request, response);
+            if ("edit".equals(action)) {
+                handleEditRequest(request, response, session);
+            } else if ("delete".equals(action)) {
+                handleDeleteRequest(request, response, session);
+            } else {
+                handleListRequest(request, response, session);
+            }
         } catch (Exception e) {
-            session.setAttribute("alertMessage", "Error loading products: " + e.getMessage());
-            session.setAttribute("alertType", "danger");
-            response.sendRedirect(request.getContextPath() + "/product");
+            handleError(session, "Error processing request: " + e.getMessage(), e);
+            response.sendRedirect(request.getContextPath() + "/AdminArea/product.jsp");
         }
     }
 
@@ -47,18 +58,85 @@ public class ProductServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         String action = request.getParameter("action");
-
+        
         try {
             if ("update".equals(action)) {
                 updateProduct(request, response, session);
+            } else if ("delete".equals(action)) { // ✅ Added delete handling in POST
+                handleDeleteRequest(request, response, session);
             } else {
                 addProduct(request, response, session);
             }
         } catch (Exception e) {
-            session.setAttribute("alertMessage", "Error processing request: " + e.getMessage());
-            session.setAttribute("alertType", "danger");
-            response.sendRedirect(request.getContextPath() + "/product");
+            handleError(session, "Error processing request: " + e.getMessage(), e);
+            response.sendRedirect(request.getContextPath() + "/AdminArea/product.jsp");
         }
+    }
+
+    private void handleEditRequest(HttpServletRequest request, HttpServletResponse response, HttpSession session) 
+            throws SQLException, ServletException, IOException {
+        int productId = Integer.parseInt(request.getParameter("id"));
+        Product product = productService.getProductById(productId);
+        
+        if (product == null) {
+            handleError(session, "Product not found with ID: " + productId, null);
+            response.sendRedirect(request.getContextPath() + "/AdminArea/product.jsp");
+            return;
+        }
+        
+        request.setAttribute("product", product);
+        request.getRequestDispatcher("/AdminArea/edit_product.jsp").forward(request, response);
+    }
+
+    private void handleDeleteRequest(HttpServletRequest request, HttpServletResponse response, HttpSession session) 
+            throws SQLException, IOException {
+        try {
+            int productId = Integer.parseInt(request.getParameter("id"));
+            
+            // First get the product to check if it exists
+            Product product = productService.getProductById(productId);
+            if (product == null) {
+                session.setAttribute("alertMessage", "Product not found with ID: " + productId);
+                session.setAttribute("alertType", "danger");
+                response.sendRedirect(request.getContextPath() + "/AdminArea/product.jsp");
+                return;
+            }
+            
+            // Delete from database
+            productService.deleteProduct(productId);
+            
+            // Delete image if exists
+            if (product.getImagePath() != null && !product.getImagePath().isEmpty()) {
+                String imagePath = getServletContext().getRealPath("") + product.getImagePath();
+                File imageFile = new File(imagePath);
+                if (imageFile.exists()) {
+                    imageFile.delete();
+                }
+            }
+            
+            // Refresh product list in session
+            List<Product> productList = productService.getAllProducts();
+            session.setAttribute("productList", productList);
+            
+            session.setAttribute("alertMessage", "Product deleted successfully!");
+            session.setAttribute("alertType", "success");
+        } catch (NumberFormatException e) {
+            session.setAttribute("alertMessage", "Invalid product ID format");
+            session.setAttribute("alertType", "danger");
+        } catch (SQLException e) {
+            session.setAttribute("alertMessage", "Database error while deleting product");
+            session.setAttribute("alertType", "danger");
+            e.printStackTrace();
+        }
+        
+        response.sendRedirect(request.getContextPath() + "/AdminArea/product.jsp");
+    }
+
+    private void handleListRequest(HttpServletRequest request, HttpServletResponse response, HttpSession session) 
+            throws SQLException, ServletException, IOException {
+        List<Product> productList = productService.getAllProducts();
+        session.setAttribute("productList", productList);
+        request.getRequestDispatcher("/AdminArea/product.jsp").forward(request, response);
     }
 
     private void updateProduct(HttpServletRequest request, HttpServletResponse response, HttpSession session) 
@@ -73,9 +151,8 @@ public class ProductServlet extends HttpServlet {
 
         Product product = productService.getProductById(id);
         if (product == null) {
-            session.setAttribute("alertMessage", "Product not found with ID: " + id);
-            session.setAttribute("alertType", "danger");
-            response.sendRedirect(request.getContextPath() + "/product");
+            handleError(session, "Product not found with ID: " + id, null);
+            response.sendRedirect(request.getContextPath() + "/AdminArea/product.jsp");
             return;
         }
 
@@ -86,8 +163,18 @@ public class ProductServlet extends HttpServlet {
         product.setAvailability(availability);
         product.setQuantity(quantity);
 
-        Part filePart = request.getPart("newImage");
+        Part filePart = request.getPart("image");
         if (filePart != null && filePart.getSize() > 0) {
+            // Delete old image
+            if (product.getImagePath() != null && !product.getImagePath().isEmpty()) {
+                String oldImagePath = getServletContext().getRealPath("") + product.getImagePath();
+                File oldImageFile = new File(oldImagePath);
+                if (oldImageFile.exists()) {
+                    oldImageFile.delete();
+                }
+            }
+            
+            // Upload new image
             String imagePath = handleFileUpload(filePart);
             if (imagePath != null) {
                 product.setImagePath(imagePath);
@@ -95,9 +182,14 @@ public class ProductServlet extends HttpServlet {
         }
 
         productService.updateProduct(product);
+        
+        // Refresh product list
+        List<Product> productList = productService.getAllProducts();
+        session.setAttribute("productList", productList);
+        
         session.setAttribute("alertMessage", "Product updated successfully!");
         session.setAttribute("alertType", "success");
-        response.sendRedirect(request.getContextPath() + "/product");
+        response.sendRedirect(request.getContextPath() + "/AdminArea/product.jsp");
     }
 
     private void addProduct(HttpServletRequest request, HttpServletResponse response, HttpSession session) 
@@ -111,25 +203,28 @@ public class ProductServlet extends HttpServlet {
 
         Part filePart = request.getPart("image");
         if (filePart == null || filePart.getSize() == 0) {
-            session.setAttribute("alertMessage", "Product image is required");
-            session.setAttribute("alertType", "danger");
-            response.sendRedirect(request.getContextPath() + "/product");
+            handleError(session, "Product image is required", null);
+            response.sendRedirect(request.getContextPath() + "/AdminArea/product.jsp");
             return;
         }
 
         String imagePath = handleFileUpload(filePart);
         if (imagePath == null) {
-            session.setAttribute("alertMessage", "Failed to upload product image");
-            session.setAttribute("alertType", "danger");
-            response.sendRedirect(request.getContextPath() + "/product");
+            handleError(session, "Failed to upload product image", null);
+            response.sendRedirect(request.getContextPath() + "/AdminArea/product.jsp");
             return;
         }
 
         Product product = new Product(productName, description, price, category, availability, quantity, imagePath);
         productService.addProduct(product);
+        
+        // Refresh list
+        List<Product> productList = productService.getAllProducts();
+        session.setAttribute("productList", productList);
+        
         session.setAttribute("alertMessage", "New product added successfully!");
         session.setAttribute("alertType", "success");
-        response.sendRedirect(request.getContextPath() + "/product");
+        response.sendRedirect(request.getContextPath() + "/AdminArea/product.jsp");
     }
 
     private String handleFileUpload(Part filePart) throws IOException {
@@ -137,15 +232,23 @@ public class ProductServlet extends HttpServlet {
         String fileExtension = fileName.substring(fileName.lastIndexOf("."));
         String newFileName = UUID.randomUUID().toString() + fileExtension;
         String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIRECTORY;
-
+        
         File uploadDir = new File(uploadPath);
         if (!uploadDir.exists()) {
             uploadDir.mkdir();
         }
-
+        
         String filePath = uploadPath + File.separator + newFileName;
         filePart.write(filePath);
-
+        
         return UPLOAD_DIRECTORY + File.separator + newFileName;
+    }
+
+    private void handleError(HttpSession session, String message, Exception e) {
+        session.setAttribute("alertMessage", message);
+        session.setAttribute("alertType", "danger");
+        if (e != null) {
+            e.printStackTrace();
+        }
     }
 }
