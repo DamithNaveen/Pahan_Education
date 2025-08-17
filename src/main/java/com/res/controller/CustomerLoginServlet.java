@@ -17,48 +17,37 @@ public class CustomerLoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        System.out.println("Login attempt - Username: " + username);
-        
+        String username = request.getParameter("username") != null ? request.getParameter("username").trim() : "";
+        String password = request.getParameter("password") != null ? request.getParameter("password").trim() : "";
         HttpSession session = request.getSession();
-        CustomerService customerService = null;
         
         try {
-            customerService = new CustomerService();
-            Customer customer = customerService.loginCustomer(username, password);
+            CustomerService service = new CustomerService();
+            Customer customer = service.loginCustomer(username, password);
             
             if (customer != null) {
-                System.out.println("Login successful for: " + customer.getUsername());
+                // Set user attributes in session
                 session.setAttribute("user_id", customer.getId());
                 session.setAttribute("user_name", customer.getFullName());
                 session.setAttribute("user_obj", customer);
-                session.setAttribute("success", "Welcome back, " + customer.getFullName() + "!");
-                response.sendRedirect("PublicArea/Index.jsp");
+                
+                // Fixed redirect with context path to home page
+                response.sendRedirect(request.getContextPath() + "/PublicArea/ndex.jsp");
                 return;
             } else {
-                System.out.println("Login failed for: " + username);
                 session.setAttribute("error", "Invalid username or password");
             }
         } catch (IllegalArgumentException e) {
             session.setAttribute("error", e.getMessage());
-            System.out.println("Validation error: " + e.getMessage());
         } catch (Exception e) {
             session.setAttribute("error", "System error during login. Please try again.");
-            System.err.println("Login error: ");
             e.printStackTrace();
-        } finally {
-            if (customerService != null) {
-                try {
-                    customerService.close();
-                } catch (Exception e) {
-                    System.err.println("Error closing service: ");
-                    e.printStackTrace();
-                }
-            }
         }
         
-        // If we get here, there was an error
-        response.sendRedirect("PublicArea/signIn.jsp");
+        // Preserve username on error
+        session.setAttribute("formUsername", username);
+        
+        // Fixed redirect with context path back to login page
+        response.sendRedirect(request.getContextPath() + "/PublicArea/signIn.jsp");
     }
 }

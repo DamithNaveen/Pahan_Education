@@ -17,61 +17,51 @@ public class CustomerRegistrationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        String fullName = request.getParameter("full_name");
-        String email = request.getParameter("email");
-        
-        System.out.println("Registration attempt - Username: " + username + ", Email: " + email);
-        
         HttpSession session = request.getSession();
-        CustomerService customerService = null;
+        
+        // Get all form parameters with trimming
+        String username = request.getParameter("username") != null ? request.getParameter("username").trim() : "";
+        String password = request.getParameter("password") != null ? request.getParameter("password").trim() : "";
+        String fullName = request.getParameter("full_name") != null ? request.getParameter("full_name").trim() : "";
+        String email = request.getParameter("email") != null ? request.getParameter("email").trim() : "";
+        String phone = request.getParameter("phone") != null ? request.getParameter("phone").trim() : "";
+        String address = request.getParameter("address") != null ? request.getParameter("address").trim() : "";
         
         try {
-            // Create customer object
             Customer customer = new Customer();
             customer.setUsername(username);
-            customer.setPassword(password);
+            customer.setPassword(password); // Note: In production, hash this password
             customer.setFullName(fullName);
             customer.setEmail(email);
+            customer.setPhone(phone);
+            customer.setAddress(address);
             
-            // Register customer
-            customerService = new CustomerService();
-            boolean success = customerService.registerCustomer(customer);
+            CustomerService service = new CustomerService();
+            boolean registered = service.registerCustomer(customer);
             
-            if (success) {
-                System.out.println("Registration successful for: " + username);
+            if (registered) {
                 session.setAttribute("success", "Registration successful! Please login.");
-                response.sendRedirect("PublicArea/signIn.jsp");
+                // Fixed redirect with context path
+                response.sendRedirect(request.getContextPath() + "/PublicArea/signIn.jsp");
                 return;
             } else {
                 session.setAttribute("error", "Registration failed. Please try again.");
             }
         } catch (IllegalArgumentException e) {
             session.setAttribute("error", e.getMessage());
-            session.setAttribute("username", username);
-            session.setAttribute("email", email);
-            session.setAttribute("fullName", fullName);
-            System.out.println("Validation error: " + e.getMessage());
         } catch (Exception e) {
             session.setAttribute("error", "System error during registration. Please try again.");
-            session.setAttribute("username", username);
-            session.setAttribute("email", email);
-            session.setAttribute("fullName", fullName);
-            System.err.println("Registration error: ");
             e.printStackTrace();
-        } finally {
-            if (customerService != null) {
-                try {
-                    customerService.close();
-                } catch (Exception e) {
-                    System.err.println("Error closing service: ");
-                    e.printStackTrace();
-                }
-            }
         }
         
-        // If we get here, there was an error
-        response.sendRedirect("PublicArea/signUp.jsp");
+        // Preserve form data on error
+        session.setAttribute("formUsername", username);
+        session.setAttribute("formEmail", email);
+        session.setAttribute("formFullName", fullName);
+        session.setAttribute("formPhone", phone);
+        session.setAttribute("formAddress", address);
+        
+        // Fixed redirect with context path
+        response.sendRedirect(request.getContextPath() + "/PublicArea/signUp.jsp");
     }
 }

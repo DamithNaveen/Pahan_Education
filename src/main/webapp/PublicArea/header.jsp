@@ -307,7 +307,7 @@
             <a href="${pageContext.request.contextPath}/PublicArea/about.jsp">About</a>
             <a href="${pageContext.request.contextPath}/PublicArea/shop.jsp">Shop</a>
             <a href="${pageContext.request.contextPath}/PublicArea/contact.jsp">Contact</a>
-            <a href="${pageContext.request.contextPath}/PublicArea/orders.jsp">Orders</a>
+            <a href="${pageContext.request.contextPath}/PublicArea/order.jsp">Orders</a>
         </nav>
         
         <div class="icons">
@@ -356,7 +356,7 @@
                     <p>Email: <span>${sessionScope.user_email}</span></p>
                 </c:if>
                 
-                <a href="${pageContext.request.contextPath}/logout" class="delete-btn">Logout</a>
+                <a href="${pageContext.request.contextPath}/customerLogout" class="delete-btn">Logout</a>
             </div>
         </c:if>
     </header>

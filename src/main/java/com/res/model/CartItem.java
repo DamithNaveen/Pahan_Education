@@ -8,7 +8,7 @@ public class CartItem {
     private double price;
     private int quantity;
     private String image;
-    
+
     // Constructors
     public CartItem() {}
     
@@ -20,7 +20,7 @@ public class CartItem {
         this.quantity = quantity;
         this.image = image;
     }
-    
+
     // Getters and Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

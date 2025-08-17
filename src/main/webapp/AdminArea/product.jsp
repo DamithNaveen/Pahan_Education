@@ -65,9 +65,9 @@
 
             document.getElementById('updateProductId').value = product.id;
             document.getElementById('updateProductName').value = product.productName;
-            document.getElementById('updateDescription').value = product.description;
+            
             document.getElementById('updatePrice').value = parseFloat(product.price) || '';
-            document.getElementById('updateCategory').value = product.category;
+            
             document.getElementById('updateAvailability').value = product.availability;
             document.getElementById('updateQuantity').value = parseInt(product.quantity) || 0;
             document.getElementById('updateImage').value = ''; // Clear file input
@@ -91,9 +91,9 @@
                         const product = {
                             id: row.children[0].textContent.trim(),
                             productName: row.children[1].textContent.trim(),
-                            description: row.children[2].textContent.trim(),
+                            
                             price: row.children[3].textContent.trim(),
-                            category: row.children[4].textContent.trim(),
+                            
                             availability: row.children[5].textContent.trim(),
                             quantity: row.children[6].textContent.trim()
                         };
@@ -122,9 +122,7 @@
     <tr>
         <th>ID</th>
         <th>Name</th>
-        <th>Description</th>
         <th>Price</th>
-        <th>Category</th>
         <th>Availability</th>
         <th>Quantity</th>
         <th>Image</th>
@@ -136,9 +134,9 @@
         <tr>
             <td>${product.id}</td>
             <td>${product.productName}</td>
-            <td>${product.description}</td>
+            
             <td>${product.price}</td>
-            <td>${product.category}</td>
+            
             <td>${product.availability}</td>
             <td>${product.quantity}</td>
             <td>
@@ -175,14 +173,12 @@
     <label for="productName">Name:</label>
     <input type="text" id="productName" name="productName" required/>
 
-    <label for="description">Description:</label>
-    <textarea id="description" name="description" required></textarea>
+   
 
     <label for="price">Price:</label>
     <input type="number" id="price" name="price" step="0.01" required/>
 
-    <label for="category">Category:</label>
-    <input type="text" id="category" name="category" required/>
+    
 
     <label for="availability">Availability:</label>
     <select id="availability" name="availability" required>
@@ -209,14 +205,12 @@
         <label for="updateProductName">Name:</label>
         <input type="text" id="updateProductName" name="productName" required/>
 
-        <label for="updateDescription">Description:</label>
-        <textarea id="updateDescription" name="description" required></textarea>
+        
 
         <label for="updatePrice">Price:</label>
         <input type="number" id="updatePrice" name="price" step="0.01" required/>
 
-        <label for="updateCategory">Category:</label>
-        <input type="text" id="updateCategory" name="category" required/>
+        
 
         <label for="updateAvailability">Availability:</label>
         <select id="updateAvailability" name="availability" required>

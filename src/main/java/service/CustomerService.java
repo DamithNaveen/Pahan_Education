@@ -1,18 +1,12 @@
 package service;
 
-import java.sql.SQLException;
 import com.res.model.Customer;
 import com.res.dao.CustomerDAO;
+import java.sql.SQLException;
 
 public class CustomerService {
-    private CustomerDAO customerDAO;
-
-    public CustomerService() throws SQLException {
-        this.customerDAO = new CustomerDAO();
-    }
-
+    
     public Customer loginCustomer(String username, String password) throws SQLException {
-        // Input validation
         if (username == null || username.trim().isEmpty()) {
             throw new IllegalArgumentException("Username is required");
         }
@@ -20,57 +14,47 @@ public class CustomerService {
             throw new IllegalArgumentException("Password is required");
         }
 
-        // Get customer from database
-        Customer customer = customerDAO.getCustomerByUsername(username.trim());
+        CustomerDAO dao = new CustomerDAO();
+        Customer customer = dao.getCustomerByUsername(username);
         
-        if (customer == null) {
-            System.out.println("No customer found with username: " + username);
-            return null;
+        if (customer != null && password.equals(customer.getPassword())) {
+            return customer;
         }
-        
-        // Password comparison (in production, use hashed passwords)
-        if (!password.equals(customer.getPassword())) {
-            System.out.println("Password mismatch for user: " + username);
-            return null;
-        }
-        
-        return customer;
+        return null;
     }
 
     public boolean registerCustomer(Customer customer) throws SQLException {
-        // Input validation
+        validateCustomer(customer);
+        
+        CustomerDAO dao = new CustomerDAO();
+        if (dao.isUsernameExists(customer.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        if (dao.isEmailExists(customer.getEmail())) {
+            throw new IllegalArgumentException("Email already registered");
+        }
+        
+        return dao.addCustomer(customer);
+    }
+
+    private void validateCustomer(Customer customer) {
         if (customer == null) {
             throw new IllegalArgumentException("Customer cannot be null");
-        }
-        if (customer.getFullName() == null || customer.getFullName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Full name is required");
         }
         if (customer.getUsername() == null || customer.getUsername().trim().isEmpty()) {
             throw new IllegalArgumentException("Username is required");
         }
-        if (customer.getEmail() == null || customer.getEmail().trim().isEmpty()) {
-            throw new IllegalArgumentException("Email is required");
-        }
         if (customer.getPassword() == null || customer.getPassword().trim().isEmpty()) {
             throw new IllegalArgumentException("Password is required");
         }
-
-        // Check if username exists
-        if (customerDAO.isUsernameExists(customer.getUsername().trim())) {
-            throw new IllegalArgumentException("Username already exists");
+        if (customer.getFullName() == null || customer.getFullName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Full name is required");
         }
-
-        // Check if email exists
-        if (customerDAO.isEmailExists(customer.getEmail().trim())) {
-            throw new IllegalArgumentException("Email already registered");
+        if (customer.getEmail() == null || customer.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("Email is required");
         }
-
-        return customerDAO.addCustomer(customer);
-    }
-
-    public void close() throws SQLException {
-        if (customerDAO != null) {
-            customerDAO.close();
+        if (customer.getPhone() != null && customer.getPhone().length() > 20) {
+            throw new IllegalArgumentException("Phone number too long");
         }
     }
 }

@@ -8,17 +8,15 @@ import java.util.List;
 
 public class ProductDAO {
     public void addProduct(Product product) throws SQLException {
-        String sql = "INSERT INTO products (product_name, description, price, category, availability, quantity, image_path) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO products (product_name, price, availability, quantity, image_path) " +
+                     "VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, product.getProductName());
-            pstmt.setString(2, product.getDescription());
-            pstmt.setDouble(3, product.getPrice());
-            pstmt.setString(4, product.getCategory());
-            pstmt.setString(5, product.getAvailability());
-            pstmt.setInt(6, product.getQuantity());
-            pstmt.setString(7, product.getImagePath());
+            pstmt.setDouble(2, product.getPrice());
+            pstmt.setString(3, product.getAvailability());
+            pstmt.setInt(4, product.getQuantity());
+            pstmt.setString(5, product.getImagePath());
             pstmt.executeUpdate();
         }
     }
@@ -33,9 +31,7 @@ public class ProductDAO {
                 Product product = new Product();
                 product.setId(rs.getInt("id"));
                 product.setProductName(rs.getString("product_name"));
-                product.setDescription(rs.getString("description"));
                 product.setPrice(rs.getDouble("price"));
-                product.setCategory(rs.getString("category"));
                 product.setAvailability(rs.getString("availability"));
                 product.setQuantity(rs.getInt("quantity"));
                 product.setImagePath(rs.getString("image_path"));
@@ -68,9 +64,7 @@ public class ProductDAO {
                     Product product = new Product();
                     product.setId(rs.getInt("id"));
                     product.setProductName(rs.getString("product_name"));
-                    product.setDescription(rs.getString("description"));
                     product.setPrice(rs.getDouble("price"));
-                    product.setCategory(rs.getString("category"));
                     product.setAvailability(rs.getString("availability"));
                     product.setQuantity(rs.getInt("quantity"));
                     product.setImagePath(rs.getString("image_path"));
@@ -82,18 +76,16 @@ public class ProductDAO {
     }
 
     public void updateProduct(Product product) throws SQLException {
-        String sql = "UPDATE products SET product_name = ?, description = ?, price = ?, " +
-                     "category = ?, availability = ?, quantity = ?, image_path = ? WHERE id = ?";
+        String sql = "UPDATE products SET product_name = ?, price = ?, " +
+                     "availability = ?, quantity = ?, image_path = ? WHERE id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, product.getProductName());
-            pstmt.setString(2, product.getDescription());
-            pstmt.setDouble(3, product.getPrice());
-            pstmt.setString(4, product.getCategory());
-            pstmt.setString(5, product.getAvailability());
-            pstmt.setInt(6, product.getQuantity());
-            pstmt.setString(7, product.getImagePath());
-            pstmt.setInt(8, product.getId());
+            pstmt.setDouble(2, product.getPrice());
+            pstmt.setString(3, product.getAvailability());
+            pstmt.setInt(4, product.getQuantity());
+            pstmt.setString(5, product.getImagePath());
+            pstmt.setInt(6, product.getId());
             pstmt.executeUpdate();
         }
     }

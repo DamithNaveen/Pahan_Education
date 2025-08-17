@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Order Confirmation</title>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/PublicArea/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/PublicArea/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/PublicArea/css/home.css">
     <style>
@@ -26,6 +26,17 @@
 
         h2 {
             color: #28a745;
+            text-align: center;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
         }
 
         table {
@@ -37,10 +48,47 @@
         th, td {
             border-bottom: 1px solid #ccc;
             padding: 10px;
+            text-align: left;
+            vertical-align: middle;
         }
 
         th {
             background: #f1f1f1;
+        }
+
+        .book-image {
+            width: 60px;
+            height: 80px;
+            object-fit: contain;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .book-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .order-details {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .order-details p {
+            margin: 8px 0;
+        }
+
+        .total-price {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 20px;
+            padding: 10px;
+            background: #f1f1f1;
+            border-radius: 5px;
         }
     </style>
     <jsp:include page="header.jsp" />
@@ -48,34 +96,62 @@
 <body>
 <div class="container">
     <h2>Thank you for your order!</h2>
+    
+    <!-- Success Message -->
+    <c:if test="${not empty sessionScope.successMessage}">
+        <div class="success-message">
+            ${sessionScope.successMessage}
+        </div>
+    </c:if>
 
-    <p><strong>Placed On:</strong> ${orderDate}</p>
-    <p><strong>Name:</strong> ${name}</p>
-    <p><strong>Number:</strong> ${number}</p>
-    <p><strong>Email:</strong> ${email}</p>
-    <p><strong>Address:</strong> ${address}</p>
-    <p><strong>Payment Method:</strong> ${method}</p>
-    <p><strong>Payment Status:</strong> ${paymentStatus}</p>
+    <div class="order-details">
+        <p><strong>Order Date:</strong> ${sessionScope.orderDate}</p>
+        <p><strong>Name:</strong> ${sessionScope.name}</p>
+        <p><strong>Phone Number:</strong> ${sessionScope.number}</p>
+        <p><strong>Email:</strong> ${sessionScope.email}</p>
+        <p><strong>Delivery Address:</strong> ${sessionScope.address}</p>
+        <p><strong>Payment Method:</strong> ${sessionScope.method}</p>
+        <p><strong>Payment Status:</strong> ${sessionScope.paymentStatus}</p>
+    </div>
 
-    <h3>Your Orders:</h3>
+    <h3>Your Order Summary</h3>
     <table>
-        <tr>
-            <th>Book</th>
-            <th>Price (Rs.)</th>
-            <th>Qty</th>
-            <th>Total</th>
-        </tr>
-        <c:forEach items="${cartItems}" var="item">
+        <thead>
             <tr>
-                <td>${item.bookName}</td>
-                <td>${item.price}</td>
-                <td>${item.quantity}</td>
-                <td>${item.price * item.quantity}</td>
+                <th>Book</th>
+                <th>Price (Rs.)</th>
+                <th>Quantity</th>
+                <th>Total</th>
             </tr>
-        </c:forEach>
+        </thead>
+        <tbody>
+            <c:forEach items="${sessionScope.cartItems}" var="item">
+                <tr>
+                    <td>
+                        <div class="book-info">
+                            <img src="${pageContext.request.contextPath}/images/${item.image}" 
+                                 alt="${item.bookName}" class="book-image">
+                            <span>${item.bookName}</span>
+                        </div>
+                    </td>
+                    <td>${item.price}</td>
+                    <td>${item.quantity}</td>
+                    <td>Rs. ${item.price * item.quantity}</td>
+                </tr>
+            </c:forEach>
+        </tbody>
     </table>
 
-    <p><strong>Total Price: Rs. ${totalPrice}</strong></p>
+    <div class="total-price">
+        <p>Total Price: Rs. ${sessionScope.totalPrice}</p>
+    </div>
+    
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="${pageContext.request.contextPath}/ClearOrderServlet" 
+           style="padding: 10px 20px; background: #28a745; color: white; text-decoration: none; border-radius: 4px;">
+            Return to Home
+        </a>
+    </div>
 </div>
 <jsp:include page="footer.jsp" />
 </body>

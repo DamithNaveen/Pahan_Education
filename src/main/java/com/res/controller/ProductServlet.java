@@ -62,7 +62,7 @@ public class ProductServlet extends HttpServlet {
         try {
             if ("update".equals(action)) {
                 updateProduct(request, response, session);
-            } else if ("delete".equals(action)) { // ✅ Added delete handling in POST
+            } else if ("delete".equals(action)) {
                 handleDeleteRequest(request, response, session);
             } else {
                 addProduct(request, response, session);
@@ -93,7 +93,6 @@ public class ProductServlet extends HttpServlet {
         try {
             int productId = Integer.parseInt(request.getParameter("id"));
             
-            // First get the product to check if it exists
             Product product = productService.getProductById(productId);
             if (product == null) {
                 session.setAttribute("alertMessage", "Product not found with ID: " + productId);
@@ -102,10 +101,8 @@ public class ProductServlet extends HttpServlet {
                 return;
             }
             
-            // Delete from database
             productService.deleteProduct(productId);
             
-            // Delete image if exists
             if (product.getImagePath() != null && !product.getImagePath().isEmpty()) {
                 String imagePath = getServletContext().getRealPath("") + product.getImagePath();
                 File imageFile = new File(imagePath);
@@ -114,7 +111,6 @@ public class ProductServlet extends HttpServlet {
                 }
             }
             
-            // Refresh product list in session
             List<Product> productList = productService.getAllProducts();
             session.setAttribute("productList", productList);
             
@@ -143,9 +139,7 @@ public class ProductServlet extends HttpServlet {
             throws SQLException, IOException, ServletException {
         int id = Integer.parseInt(request.getParameter("id"));
         String productName = request.getParameter("productName");
-        String description = request.getParameter("description");
         double price = Double.parseDouble(request.getParameter("price"));
-        String category = request.getParameter("category");
         String availability = request.getParameter("availability");
         int quantity = Integer.parseInt(request.getParameter("quantity"));
 
@@ -157,15 +151,12 @@ public class ProductServlet extends HttpServlet {
         }
 
         product.setProductName(productName);
-        product.setDescription(description);
         product.setPrice(price);
-        product.setCategory(category);
         product.setAvailability(availability);
         product.setQuantity(quantity);
 
         Part filePart = request.getPart("image");
         if (filePart != null && filePart.getSize() > 0) {
-            // Delete old image
             if (product.getImagePath() != null && !product.getImagePath().isEmpty()) {
                 String oldImagePath = getServletContext().getRealPath("") + product.getImagePath();
                 File oldImageFile = new File(oldImagePath);
@@ -174,7 +165,6 @@ public class ProductServlet extends HttpServlet {
                 }
             }
             
-            // Upload new image
             String imagePath = handleFileUpload(filePart);
             if (imagePath != null) {
                 product.setImagePath(imagePath);
@@ -183,7 +173,6 @@ public class ProductServlet extends HttpServlet {
 
         productService.updateProduct(product);
         
-        // Refresh product list
         List<Product> productList = productService.getAllProducts();
         session.setAttribute("productList", productList);
         
@@ -195,9 +184,7 @@ public class ProductServlet extends HttpServlet {
     private void addProduct(HttpServletRequest request, HttpServletResponse response, HttpSession session) 
             throws SQLException, IOException, ServletException {
         String productName = request.getParameter("productName");
-        String description = request.getParameter("description");
         double price = Double.parseDouble(request.getParameter("price"));
-        String category = request.getParameter("category");
         String availability = request.getParameter("availability");
         int quantity = Integer.parseInt(request.getParameter("quantity"));
 
@@ -215,10 +202,9 @@ public class ProductServlet extends HttpServlet {
             return;
         }
 
-        Product product = new Product(productName, description, price, category, availability, quantity, imagePath);
+        Product product = new Product(productName, price, availability, quantity, imagePath);
         productService.addProduct(product);
         
-        // Refresh list
         List<Product> productList = productService.getAllProducts();
         session.setAttribute("productList", productList);
         

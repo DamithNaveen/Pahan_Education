@@ -2,7 +2,6 @@ package com.res.controller;
 
 import com.res.dao.CartDAO;
 import com.res.model.CartItem;
-
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -36,30 +35,48 @@ public class PlaceOrderServlet extends HttpServlet {
         try (CartDAO cartDAO = new CartDAO()) {
             List<CartItem> cartItems = cartDAO.getCartItems(userId);
 
+            if (cartItems.isEmpty()) {
+                request.setAttribute("error", "Your cart is empty");
+                request.getRequestDispatcher("/PublicArea/cart.jsp").forward(request, response);
+                return;
+            }
+
             double totalPrice = cartItems.stream()
                     .mapToDouble(item -> item.getPrice() * item.getQuantity())
                     .sum();
 
             String orderDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
-            // Set attributes for order.jsp
-            request.setAttribute("orderDate", orderDate);
-            request.setAttribute("name", name);
-            request.setAttribute("number", number);
-            request.setAttribute("email", email);
-            request.setAttribute("address", address);
-            request.setAttribute("method", method);
-            request.setAttribute("cartItems", cartItems);
-            request.setAttribute("totalPrice", totalPrice);
-            request.setAttribute("paymentStatus", "Pending");
+            // Save order to database
+            boolean orderSaved = cartDAO.saveOrder(userId, name, number, email, method, 
+                                                  address, totalPrice, orderDate, "Pending");
 
-            RequestDispatcher dispatcher = request.getRequestDispatcher("PublicArea/order.jsp");
-            dispatcher.forward(request, response);
+            if (orderSaved) {
+                // Clear cart after successful order
+                cartDAO.clearCart(userId);
+
+                // Store in session for current view
+                session.setAttribute("orderDate", orderDate);
+                session.setAttribute("name", name);
+                session.setAttribute("number", number);
+                session.setAttribute("email", email);
+                session.setAttribute("address", address);
+                session.setAttribute("method", method);
+                session.setAttribute("cartItems", cartItems);
+                session.setAttribute("totalPrice", totalPrice);
+                session.setAttribute("paymentStatus", "Pending");
+                session.setAttribute("successMessage", "Your order has been placed successfully!");
+
+                response.sendRedirect(request.getContextPath() + "/PublicArea/order.jsp?success=true");
+            } else {
+                request.setAttribute("error", "Failed to save order. Please try again.");
+                request.getRequestDispatcher("/PublicArea/checkout.jsp").forward(request, response);
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("error", "An error occurred while placing the order.");
-            request.getRequestDispatcher("PublicArea/cart.jsp").forward(request, response);
+            request.getRequestDispatcher("/PublicArea/cart.jsp").forward(request, response);
         }
     }
 }
