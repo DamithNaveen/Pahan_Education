@@ -8,6 +8,8 @@ public class Customer {
     private String email;
     private String phone;
     private String address;
+    private int orderCount;
+    private double totalSpent;
     
     // Constructors
     public Customer() {}
@@ -41,9 +43,16 @@ public class Customer {
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
     
+    public int getOrderCount() { return orderCount; }
+    public void setOrderCount(int orderCount) { this.orderCount = orderCount; }
+    
+    public double getTotalSpent() { return totalSpent; }
+    public void setTotalSpent(double totalSpent) { this.totalSpent = totalSpent; }
+    
     @Override
     public String toString() {
         return "Customer [id=" + id + ", username=" + username + ", fullName=" + fullName + 
-               ", email=" + email + ", phone=" + phone + ", address=" + address + "]";
+               ", email=" + email + ", phone=" + phone + ", address=" + address + 
+               ", orderCount=" + orderCount + ", totalSpent=" + totalSpent + "]";
     }
 }

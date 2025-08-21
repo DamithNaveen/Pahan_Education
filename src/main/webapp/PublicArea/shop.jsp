@@ -149,7 +149,7 @@
 </a>
 
 <section class="products_cont" id="products">
-    <h2 class="section-title">Featured Books</h2>
+    <h2 class="banner-title">Featured Books</h2>
     <div class="pro_box_cont">
         <!-- Hardcoded Products -->
         <div class="pro_box">

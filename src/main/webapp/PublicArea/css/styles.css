@@ -19,24 +19,6 @@ body {
 
 
 
-/* Section Titles */
-.section-title {
-    text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 3rem;
-    color: #003049;
-    position: relative;
-}
-
-.section-title::after {
-    content: '';
-    display: block;
-    width: 100px;
-    height: 4px;
-    background-color: #C1121F;
-    margin: 10px auto;
-}
-
 /* Products Section */
 .products_cont {
     padding: 5rem 2rem;

@@ -13,7 +13,7 @@
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet' />
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" type="image/x-icon" href="./assets/images/LogoAdmin.png" />
-    <title>Admin Dashboard</title>
+    <title>Pahan Edu - Admin Dashboard</title>
 </head>
 <body>
 

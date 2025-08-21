@@ -32,7 +32,7 @@ public class CustomerLoginServlet extends HttpServlet {
                 session.setAttribute("user_obj", customer);
                 
                 // Fixed redirect with context path to home page
-                response.sendRedirect(request.getContextPath() + "/PublicArea/ndex.jsp");
+                response.sendRedirect(request.getContextPath() + "/PublicArea/Index.jsp");
                 return;
             } else {
                 session.setAttribute("error", "Invalid username or password");

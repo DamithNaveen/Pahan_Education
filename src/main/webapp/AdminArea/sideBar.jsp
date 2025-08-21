@@ -19,16 +19,12 @@
     </li>
     
    <li>
-  <a href="./orders.jsp">
+  <a href="./admin-orders.jsp">
     <i class='bx bxs-cart icon'></i> Orders
   </a>
 </li>
 
-<li>
-  <a href="./users.jsp">
-    <i class='bx bxs-user icon'></i> Users
-  </a>
-</li>
+
 
 <li>
   <a href="./messages.jsp">
@@ -36,6 +32,13 @@
   </a>
 </li>
 
+
+
+<li class="nav-item">
+    <a class="nav-link" href="${pageContext.request.contextPath}/admincustomers">
+        <i class="fas fa-users"></i> Customers
+    </a>
+</li>
     
   </ul>
 </section>		

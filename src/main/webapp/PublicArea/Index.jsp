@@ -94,7 +94,7 @@
             <!-- Text Column (Left) -->
             <div class="col-md-6 text-column">
               <div class="banner-content">
-                <h2>The Fine Print Book Collection</h2>
+              <h2 class="banner-title">The Fine Print Book Collection</h2>
                 <p class="lead">Best Offer Save 30%. Grab it now!</p>
                 <a href="${pageContext.request.contextPath}/PublicArea/shop.jsp" class="btn">Shop Collection</a>
               </div>
@@ -118,8 +118,8 @@
 
 <!-- Services Section - 4 Boxes Across Screen -->
 <section class="services-section">
-<h2 class="section-title">Our Advantages</h2>
-  <div class="services-container">
+<h2 class="banner-title">Our Advantages</h2>
+<div class="services-container">
     <!-- Free Delivery -->
     <div class="service-card">
       <div class="service-icon">
@@ -173,7 +173,7 @@
 </section>
 
 <section class="products_cont" id="products">
-    <h2 class="section-title">Featured Books</h2>
+    <h2 class="banner-title">Featured Books</h2>
     <div class="pro_box_cont">
         <!-- Product 1 -->
         <div class="pro_box">
@@ -237,7 +237,7 @@
   <div class="testimonial-overlay"></div>
   <div class="container">
     <div class="testimonial-card">
-      <h2 class="section-title">What Our Readers Say</h2>
+      <h2 class="banner-title">What Our Readers Say</h2>
       <div class="testimonial-slider">
         <div class="testimonial active">
           <p class="testimonial-text">"This bookstore has the best collection of classics I've ever seen. Fast delivery and perfect packaging!"</p>

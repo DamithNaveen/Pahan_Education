@@ -1,6 +1,5 @@
 package service;
 
-
 import com.res.dao.UserDAO;
 import com.res.model.User;
 import com.res.model.UserRole;
@@ -24,27 +23,24 @@ public class UserService {
         return userDAO.getUserByEmail(email);
     }
     
-    public void addDriver(User driver) throws SQLException {
-        driver.setRole(UserRole.DRIVER);
-        userDAO.addDriver(driver);
+    public User getUserById(int id) throws SQLException {
+        return userDAO.getUserById(id);
     }
     
-    public List<User> getAllDrivers() throws SQLException {
-        return userDAO.getAllDrivers();
+    public List<User> getAllUsers() throws SQLException {
+        return userDAO.getAllUsers();
     }
     
-    public User getDriverById(int id) throws SQLException {
-        return userDAO.getDriverById(id);
+    public void addUser(User user) throws SQLException {
+        userDAO.addUser(user);
     }
     
-    public void updateDriver(User driver) throws SQLException {
-     
-        driver.setRole(UserRole.DRIVER);
-        userDAO.updateDriver(driver);
+    public void updateUser(User user) throws SQLException {
+        userDAO.updateUser(user);
     }
-
-    public void deleteDriver(int id) throws SQLException {
-        userDAO.deleteDriver(id);
+    
+    public void deleteUser(int id) throws SQLException {
+        userDAO.deleteUser(id);
     }
     
     public boolean isEmailExists(String email) throws SQLException {

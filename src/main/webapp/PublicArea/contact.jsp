@@ -1,5 +1,6 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
     // Handle form submission
     if ("POST".equalsIgnoreCase(request.getMethod())) {
@@ -79,11 +80,16 @@
                         <h2 class="sub-title mb-5 border-bottom pb-4">Get in touch</h2>
 
                         <!-- Success alert -->
-                        <c:if test="${not empty param.success}">
+                        <%
+                            String successParam = request.getParameter("success");
+                            if (successParam != null && successParam.equals("1")) {
+                        %>
                             <div class="alert alert-success" role="alert">
                                 Your message has been sent successfully!
                             </div>
-                        </c:if>
+                        <%
+                            }
+                        %>
 
                         <form action="${pageContext.request.contextPath}/PublicArea/contact.jsp" method="post"
                             class="needs-validation" novalidate>

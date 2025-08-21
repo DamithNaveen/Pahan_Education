@@ -30,7 +30,7 @@ public class CustomerRegistrationServlet extends HttpServlet {
         try {
             Customer customer = new Customer();
             customer.setUsername(username);
-            customer.setPassword(password); // Note: In production, hash this password
+            customer.setPassword(password);
             customer.setFullName(fullName);
             customer.setEmail(email);
             customer.setPhone(phone);
@@ -41,7 +41,11 @@ public class CustomerRegistrationServlet extends HttpServlet {
             
             if (registered) {
                 session.setAttribute("success", "Registration successful! Please login.");
-                // Fixed redirect with context path
+                
+                // You could add admin notification logic here
+                // For example, store in session for admin to see new registrations
+                session.setAttribute("newRegistration", "New customer registered: " + username);
+                
                 response.sendRedirect(request.getContextPath() + "/PublicArea/signIn.jsp");
                 return;
             } else {
@@ -61,7 +65,6 @@ public class CustomerRegistrationServlet extends HttpServlet {
         session.setAttribute("formPhone", phone);
         session.setAttribute("formAddress", address);
         
-        // Fixed redirect with context path
         response.sendRedirect(request.getContextPath() + "/PublicArea/signUp.jsp");
     }
 }

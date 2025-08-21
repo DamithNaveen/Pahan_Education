@@ -2,14 +2,13 @@ package com.res.dao;
 
 import com.res.model.User;
 import com.res.model.UserRole;
+import service.UserService;  // Import for authentication constants
 import util.DatabaseUtil;
-import service.UserService;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,16 +25,21 @@ public class UserDAO {
                 if (rs.next()) {
                     String storedPassword = rs.getString("password");
                     String storedRole = rs.getString("role");
-                    if (password.equals(storedPassword)) {
-                        if (roleValue.equals(storedRole)) {
-                            return UserService.AUTH_SUCCESS;
-                        } else {
-                            return UserService.INVALID_ROLE;
-                        }
-                    } else {
+                    
+                    // Check password first
+                    if (!password.equals(storedPassword)) {
                         return UserService.INVALID_PASSWORD;
                     }
+                    
+                    // Then check role
+                    if (!roleValue.equals(storedRole)) {
+                        return UserService.INVALID_ROLE;
+                    }
+                    
+                    // If both match, return success
+                    return UserService.AUTH_SUCCESS;
                 } else {
+                    // No user found with this email
                     return UserService.INVALID_EMAIL;
                 }
             }
@@ -51,119 +55,99 @@ public class UserDAO {
             
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    User user = new User();
-                    user.setId(rs.getInt("id"));
-                    user.setEmail(rs.getString("email"));
-                    user.setRoleFromString(rs.getString("role"));
-                    user.setName(rs.getString("name"));
-                    user.setAge(rs.getInt("age"));
-                    user.setExperience(rs.getString("experience"));
-                    user.setLicenseId(rs.getString("license_id"));
-                    user.setGender(rs.getString("gender"));
-                    user.setProfilePhoto(rs.getString("profile_photo"));
-                    return user;
+                    return extractUserFromResultSet(rs);
                 }
             }
         }
         return null;
     }
     
-
-    public void addDriver(User driver) throws SQLException {
-        String sql = "INSERT INTO users (email, password, role, name, age, experience, license_id, gender, profile_photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public User getUserById(int id) throws SQLException {
+        String sql = "SELECT * FROM users WHERE id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, driver.getEmail());
-            pstmt.setString(2, driver.getPassword());
-            pstmt.setString(3, UserRole.DRIVER.getValue()); 
-            pstmt.setString(4, driver.getName());
-            pstmt.setInt(5, driver.getAge());
-            pstmt.setString(6, driver.getExperience());
-            pstmt.setString(7, driver.getLicenseId());
-            pstmt.setString(8, driver.getGender());
-            pstmt.setString(9, driver.getProfilePhoto());
-            pstmt.executeUpdate();
-        }
-    }
-    
-    public List<User> getAllDrivers() throws SQLException {
-        List<User> driverList = new ArrayList<>();
-        String sql = "SELECT * FROM users WHERE role = ?";
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-             
-            pstmt.setString(1, UserRole.DRIVER.getValue());
-             
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    User driver = new User();
-                    driver.setId(rs.getInt("id"));
-                    driver.setEmail(rs.getString("email"));
-                    driver.setRoleFromString(rs.getString("role"));
-                    driver.setName(rs.getString("name"));
-                    driver.setAge(rs.getInt("age"));
-                    driver.setExperience(rs.getString("experience"));
-                    driver.setLicenseId(rs.getString("license_id"));
-                    driver.setGender(rs.getString("gender"));
-                    driver.setProfilePhoto(rs.getString("profile_photo"));
-                    driverList.add(driver);
-                }
-            }
-        }
-        return driverList;
-    }
-    
-    public User getDriverById(int id) throws SQLException {
-        String sql = "SELECT * FROM users WHERE id = ? AND role = ?";
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
             pstmt.setInt(1, id);
-            pstmt.setString(2, UserRole.DRIVER.getValue());
             
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    User driver = new User();
-                    driver.setId(rs.getInt("id"));
-                    driver.setEmail(rs.getString("email"));
-                    driver.setPassword(rs.getString("password"));
-                    driver.setRoleFromString(rs.getString("role"));
-                    driver.setName(rs.getString("name"));
-                    driver.setAge(rs.getInt("age"));
-                    driver.setExperience(rs.getString("experience"));
-                    driver.setLicenseId(rs.getString("license_id"));
-                    driver.setGender(rs.getString("gender"));
-                    driver.setProfilePhoto(rs.getString("profile_photo"));
-                    return driver;
+                    return extractUserFromResultSet(rs);
                 }
             }
         }
         return null;
     }
     
-    public void updateDriver(User driver) throws SQLException {
-        String sql = "UPDATE users SET email = ?, password = ?, name = ?, age = ?, experience = ?, license_id = ?, gender = ?, profile_photo = ? WHERE id = ? AND role = ?";
+    public List<User> getAllUsers() throws SQLException {
+        List<User> userList = new ArrayList<>();
+        String sql = "SELECT * FROM users ORDER BY created_at DESC";
         try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, driver.getEmail());
-            pstmt.setString(2, driver.getPassword());
-            pstmt.setString(3, driver.getName());
-            pstmt.setInt(4, driver.getAge());
-            pstmt.setString(5, driver.getExperience());
-            pstmt.setString(6, driver.getLicenseId());
-            pstmt.setString(7, driver.getGender());
-            pstmt.setString(8, driver.getProfilePhoto());
-            pstmt.setInt(9, driver.getId());
-            pstmt.setString(10, UserRole.DRIVER.getValue());
-            pstmt.executeUpdate();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                userList.add(extractUserFromResultSet(rs));
+            }
+        }
+        return userList;
+    }
+    
+    public void addUser(User user) throws SQLException {
+        String sql = "INSERT INTO users (email, password, role, name) VALUES (?, ?, ?, ?)";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            
+            pstmt.setString(1, user.getEmail());
+            pstmt.setString(2, user.getPassword());
+            pstmt.setString(3, user.getRole().getValue());
+            pstmt.setString(4, user.getName());
+            
+            int affectedRows = pstmt.executeUpdate();
+            
+            if (affectedRows == 0) {
+                throw new SQLException("Creating user failed, no rows affected.");
+            }
+            
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    user.setId(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Creating user failed, no ID obtained.");
+                }
+            }
         }
     }
     
-    public void deleteDriver(int id) throws SQLException {
+    public void updateUser(User user) throws SQLException {
+        String sql = "UPDATE users SET email = ?, password = ?, name = ? WHERE id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, user.getEmail());
+            pstmt.setString(2, user.getPassword());
+            pstmt.setString(3, user.getName());
+            pstmt.setInt(4, user.getId());
+            
+            int affectedRows = pstmt.executeUpdate();
+            
+            if (affectedRows == 0) {
+                throw new SQLException("Updating user failed, no rows affected.");
+            }
+        }
+    }
+    
+    public void deleteUser(int id) throws SQLException {
         String sql = "DELETE FROM users WHERE id = ?";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
             pstmt.setInt(1, id);
-            pstmt.executeUpdate();
+            
+            int affectedRows = pstmt.executeUpdate();
+            
+            if (affectedRows == 0) {
+                throw new SQLException("Deleting user failed, no rows affected.");
+            }
         }
     }
     
@@ -171,13 +155,26 @@ public class UserDAO {
         String sql = "SELECT COUNT(*) FROM users WHERE email = ?";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
             pstmt.setString(1, email);
+            
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt(1) > 0; 
+                    return rs.getInt(1) > 0;
                 }
             }
         }
         return false;
+    }
+    
+    private User extractUserFromResultSet(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setId(rs.getInt("id"));
+        user.setEmail(rs.getString("email"));
+        user.setPassword(rs.getString("password"));
+        user.setRoleFromString(rs.getString("role"));
+        user.setName(rs.getString("name"));
+        user.setCreatedAt(rs.getTimestamp("created_at"));
+        return user;
     }
 }

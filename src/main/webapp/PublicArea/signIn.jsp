@@ -4,40 +4,41 @@
 <html>
 <head>
     <title>Customer Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="../images/customerlogin.jpg">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/PublicArea/css/SignIn.css">
 </head>
 <body>
-    <div class="login-container">
-        <h2>Customer Login</h2>
+  <div class="container">
+    <div class="myform">
+      <form action="${pageContext.request.contextPath}/customerLogin" method="POST">
+        <h2>CUSTOMER LOGIN</h2>
         
         <c:if test="${not empty success}">
-            <div class="alert alert-success">
+            <div class="success-message">
                 ${success}
             </div>
         </c:if>
         
         <c:if test="${not empty error}">
-            <div class="alert alert-danger">
+            <div class="error-message">
                 <strong>Error:</strong> ${error}
             </div>
         </c:if>
         
-        <form action="${pageContext.request.contextPath}/customerLogin" method="POST">
-            <div class="input-group">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required 
-                       value="${param.username}">
-            </div>
-            <div class="input-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit">Sign In</button>
-        </form>
+        <input type="text" id="username" name="username" placeholder="Enter Username" required value="${param.username}">
+        <input type="password" id="password" name="password" placeholder="Enter Password" required>
+        <button type="submit">SIGN IN</button>
         
-        <p>Don't have an account? 
+        <p class="signup-link">Don't have an account? 
            <a href="${pageContext.request.contextPath}/PublicArea/signUp.jsp">Sign up</a>
         </p>
+      </form>
     </div>
+    <div class="image">
+      <img src="${pageContext.request.contextPath}/PublicArea/images/customer-login-image.jpg" alt="Customer Login Image">
+    </div>
+  </div>
 </body>
 </html>
