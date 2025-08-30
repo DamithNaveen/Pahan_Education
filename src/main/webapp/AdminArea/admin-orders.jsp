@@ -1,219 +1,228 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Order Management</title>
+    <title>Order Confirmation</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/PublicArea/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/PublicArea/css/home.css">
     <style>
-        .admin-container {
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 20px;
-        }
-        .filter-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .order-card {
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            transition: box-shadow 0.3s;
-        }
-        .order-card:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-completed { background: #d4edda; color: #155724; }
-        .status-cancelled { background: #f8d7da; color: #721c24; }
-        .action-buttons .btn {
-            margin-right: 5px;
-        }
+    
+    /* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f5f7fa;
+    color: #333;
+    padding: 15px;
+    line-height: 1.5;
+}
+
+/* Container box */
+.container {
+    max-width: 700px; /* smaller width */
+    margin: auto;
+    background: #fff;
+    padding: 20px; /* reduced padding */
+    border-radius: 10px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+}
+
+/* Success heading */
+h2 {
+    color: #28a745;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 24px; /* slightly smaller */
+    font-weight: 700;
+}
+
+/* Success message */
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 12px 15px; /* reduced padding */
+    margin-bottom: 20px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 15px;
+    border: 1px solid #c3e6cb;
+}
+
+/* Order details box */
+.order-details {
+    margin-bottom: 20px;
+    padding: 15px; /* reduced padding */
+    background: #f9f9f9;
+    border-left: 4px solid #28a745;
+    border-radius: 6px;
+}
+
+.order-details p {
+    margin: 6px 0; /* smaller margin */
+    font-size: 14px;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+table thead {
+    background: #28a745;
+    color: #fff;
+}
+
+th, td {
+    padding: 10px; /* reduced padding */
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+th {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Product image + info */
+.book-info {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* reduced gap */
+}
+
+.book-image {
+    width: 50px; /* smaller image */
+    height: 70px;
+    object-fit: contain;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #fff;
+    padding: 2px;
+}
+
+/* Total price box */
+.total-price {
+    font-size: 16px; /* smaller font */
+    font-weight: bold;
+    text-align: right;
+    margin-top: 20px;
+    padding: 12px; /* smaller padding */
+    background: #f1f1f1;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .book-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .book-image {
+        margin-bottom: 5px;
+    }
+
+    table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+    }
+
+    tr {
+        margin-bottom: 12px;
+    }
+
+    th {
+        display: none;
+    }
+
+    td {
+        padding: 8px;
+        border: none;
+        border-bottom: 1px solid #eee;
+    }
+
+    td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        display: block;
+        margin-bottom: 4px;
+        color: #555;
+    }
+
+    .total-price {
+        text-align: center;
+    }
+}
+
+    
+    
     </style>
+    
+       
 </head>
 <body>
-    <jsp:include page="../PublicArea/header.jsp" />
 
-    <div class="admin-container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2><i class="fas fa-shopping-cart me-2"></i>Order Management</h2>
-            <span class="badge bg-primary">Total Orders: ${totalRecords}</span>
-        </div>
-
-        <!-- Messages -->
-        <c:if test="${not empty param.message}">
-            <div class="alert alert-success alert-dismissible fade show">
-                ${param.message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        </c:if>
-        
-        <c:if test="${not empty param.error}">
-            <div class="alert alert-danger alert-dismissible fade show">
-                ${param.error}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        </c:if>
-
-        <!-- Filter Section -->
-        <div class="filter-section">
-            <form method="get" action="${pageContext.request.contextPath}/AdminOrderServlet">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
-                            <option value="">All Status</option>
-                            <option value="Pending" ${param.status == 'Pending' ? 'selected' : ''}>Pending</option>
-                            <option value="Completed" ${param.status == 'Completed' ? 'selected' : ''}>Completed</option>
-                            <option value="Cancelled" ${param.status == 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">From Date</label>
-                        <input type="date" name="dateFrom" value="${param.dateFrom}" class="form-control">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">To Date</label>
-                        <input type="date" name="dateTo" value="${param.dateTo}" class="form-control">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">&nbsp;</label>
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">Filter</button>
-                            <a href="${pageContext.request.contextPath}/AdminOrderServlet" class="btn btn-secondary">Clear</a>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <!-- Orders Table -->
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Order ID</th>
-                                <th>Customer</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Total Amount</th>
-                                <th>Order Date</th>
-                                <th>Status</th>
-                                <th>Payment Method</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${orders}" var="order">
-                                <tr>
-                                    <td>#${order.id}</td>
-                                    <td>${order.name}</td>
-                                    <td>${order.email}</td>
-                                    <td>${order.number}</td>
-                                    <td>Rs. ${order.totalPrice}</td>
-                                    <td>${order.orderDate}</td>
-                                    <td>
-                                        <span class="status-badge status-${order.paymentStatus.toLowerCase()}">
-                                            ${order.paymentStatus}
-                                        </span>
-                                    </td>
-                                    <td>${order.method}</td>
-                                    <td class="action-buttons">
-                                        <a href="${pageContext.request.contextPath}/AdminOrderServlet?action=view&id=${order.id}" 
-                                           class="btn btn-sm btn-info" title="View Details">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="${pageContext.request.contextPath}/AdminOrderServlet?action=edit&id=${order.id}" 
-                                           class="btn btn-sm btn-warning" title="Edit Order">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <c:if test="${order.paymentStatus == 'Pending'}">
-                                            <a href="${pageContext.request.contextPath}/AdminOrderServlet?action=confirm&id=${order.id}" 
-                                               class="btn btn-sm btn-success" title="Confirm Order"
-                                               onclick="return confirm('Confirm this order?')">
-                                                <i class="fas fa-check"></i>
-                                            </a>
-                                        </c:if>
-                                        <a href="${pageContext.request.contextPath}/AdminOrderServlet?action=delete&id=${order.id}" 
-                                           class="btn btn-sm btn-danger" title="Delete Order"
-                                           onclick="return confirm('Are you sure you want to delete this order?')">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                            
-                            <c:if test="${empty orders}">
-                                <tr>
-                                    <td colspan="9" class="text-center text-muted py-4">
-                                        <i class="fas fa-inbox fa-3x mb-3"></i>
-                                        <p>No orders found</p>
-                                    </td>
-                                </tr>
-                            </c:if>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Pagination -->
-                <c:if test="${totalPages > 1}">
-                    <nav aria-label="Order pagination">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                <a class="page-link" 
-                                   href="${pageContext.request.contextPath}/AdminOrderServlet?page=${currentPage - 1}&status=${param.status}&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}">
-                                    Previous
-                                </a>
-                            </li>
-                            
-                            <c:forEach begin="1" end="${totalPages}" var="i">
-                                <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                    <a class="page-link" 
-                                       href="${pageContext.request.contextPath}/AdminOrderServlet?page=${i}&status=${param.status}&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}">
-                                        ${i}
-                                    </a>
-                                </li>
-                            </c:forEach>
-                            
-                            <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                <a class="page-link" 
-                                   href="${pageContext.request.contextPath}/AdminOrderServlet?page=${currentPage + 1}&status=${param.status}&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}">
-                                    Next
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </c:if>
-            </div>
-        </div>
+    <div class="order-details">
+        <p><strong>Order Date:</strong> ${sessionScope.orderDate}</p>
+        <p><strong>Name:</strong> ${sessionScope.name}</p>
+        <p><strong>Phone Number:</strong> ${sessionScope.number}</p>
+        <p><strong>Email:</strong> ${sessionScope.email}</p>
+        <p><strong>Delivery Address:</strong> ${sessionScope.address}</p>
+        <p><strong>Payment Method:</strong> ${sessionScope.method}</p>
+        <p><strong>Payment Status:</strong> ${sessionScope.paymentStatus}</p>
     </div>
 
-    <jsp:include page="../PublicArea/footer.jsp" />
+    <h3>Your Order Summary</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Price (Rs.)</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <c:forEach items="${sessionScope.cartItems}" var="item">
+                <tr>
+                    <td>
+                        <div class="book-info">
+                            <img src="${pageContext.request.contextPath}/images/${item.image}" 
+                                 alt="${item.bookName}" class="book-image">
+                            <span>${item.bookName}</span>
+                        </div>
+                    </td>
+                    <td>${item.price}</td>
+                    <td>${item.quantity}</td>
+                    <td>Rs. ${item.price * item.quantity}</td>
+                </tr>
+            </c:forEach>
+        </tbody>
+    </table>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Auto-hide alerts after 5 seconds
-        setTimeout(() => {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                new bootstrap.Alert(alert).close();
-            });
-        }, 5000);
-    </script>
+    <div class="total-price">
+        <p>Total Price: Rs. ${sessionScope.totalPrice}</p>
+    </div>
+    
+           
+
+
 </body>
 </html>

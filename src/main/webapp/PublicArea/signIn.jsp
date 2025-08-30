@@ -37,7 +37,7 @@
       </form>
     </div>
     <div class="image">
-      <img src="${pageContext.request.contextPath}/PublicArea/images/customer-login-image.jpg" alt="Customer Login Image">
+      <img src="${pageContext.request.contextPath}/images/customerlogin.jpg" alt="Customer Login Image">
     </div>
   </div>
 </body>

@@ -106,46 +106,6 @@
             font-family: monospace;
             font-size: 12px;
         }
-        .actions {
-    display: flex;
-    gap: 8px;
-}
-
-.actions .btn {
-    padding: 6px 14px;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 600;
-    text-decoration: none;
-    color: #fff;
-    transition: background 0.3s ease, transform 0.2s ease;
-}
-
-.actions .btn:hover {
-    transform: scale(1.05);
-}
-
-.actions .view {
-    background-color: #007bff;
-}
-.actions .view:hover {
-    background-color: #0056b3;
-}
-
-.actions .update {
-    background-color: #28a745;
-}
-.actions .update:hover {
-    background-color: #1e7e34;
-}
-
-.actions .delete {
-    background-color: #dc3545;
-}
-.actions .delete:hover {
-    background-color: #a71d2a;
-}
-        
     </style>
 </head>
 <body>
@@ -204,11 +164,10 @@
                         <td>${customer.orderCount}</td>
                         <td>Rs. <fmt:formatNumber value="${customer.totalSpent}" pattern="#,##0.00"/></td>
                         <td class="actions">
-                            <<div class="actions">
-                                <a href="${pageContext.request.contextPath}/AdminCustomerServlet?action=edit&id=${customer.id}" class="btn update">Edit</a>
-                                <a href="${pageContext.request.contextPath}/AdminCustomerServlet?action=delete&id=${customer.id}" class="btn delete"
-                                   onclick="return confirm('Are you sure you want to delete customer: ${customer.username}? All associated orders will also be deleted.');">Delete</a>
-                            </div>
+                            <a href="${pageContext.request.contextPath}/AdminCustomerServlet?action=view&id=${customer.id}" class="view">View</a>
+                            <a href="${pageContext.request.contextPath}/AdminCustomerServlet?action=edit&id=${customer.id}" class="update">Update</a>
+                            <a href="${pageContext.request.contextPath}/AdminCustomerServlet?action=delete&id=${customer.id}" class="delete"
+                               onclick="return confirm('Are you sure you want to delete customer: ${customer.username}? All associated orders will also be deleted.');">Delete</a>
                         </td>
                     </tr>
                 </c:forEach>
